@@ -10,7 +10,7 @@ import data_json from '../../assets/map.json';
 export class InGameComponent implements OnInit {
 
   var config = {
-      type: Phaser.AUTO,
+      type: Phaser.CANVAS,
       width: window.innerWidth,
       height: window.innerHeight,
       pixelArt: true,
@@ -23,9 +23,10 @@ export class InGameComponent implements OnInit {
       scene: {
         preload: preload,
         create: create,
-        update: update
+        update: update,
+        render: render
       }
-    };
+
 
 
   var player;
@@ -68,24 +69,21 @@ export class InGameComponent implements OnInit {
 
   function update() {
 
-    let cursors = this.input.keyboard.createCursorKeys();
-
     if (cursors.left.isDown) {
-      player.setVelocityX(-160);
+      player.x -= 10;
 
     } else if (cursors.right.isDown) {
-      player.setVelocityX(160);
+      player.x += 10;
 
     } else if (cursors.up.isDown) {
-      player.setVelocityY(-160);
+      player.y -= 10;
 
     } else if (cursors.down.isDown) {
-      player.setVelocityY(160);
+      player.y += 10
 
-    } else {
-      player.setVelocityY(0);
-      player.setVelocityX(0);
     }
+
+    game.world.wrap(player, 0, true);
   }
 
   function getTheGoldenOrb (player, orb) {
