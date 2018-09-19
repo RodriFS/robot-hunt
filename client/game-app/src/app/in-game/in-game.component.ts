@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
+import data_json from '../../assets/map.json';
 
 @Component({
   selector: 'app-in-game',
@@ -12,6 +13,7 @@ export class InGameComponent implements OnInit {
       type: Phaser.AUTO,
       width: window.innerWidth,
       height: window.innerHeight,
+      pixelArt: true,
       physics: {
         default: 'arcade',
         arcade: {
@@ -27,18 +29,41 @@ export class InGameComponent implements OnInit {
 
 
   var player;
+  var orb;
+  var walls;
+
+  var score = 0;
+  var scoreText;
   var game = new Phaser.Game(config);
 
 
   function preload () {
     this.load.setBaseURL('../assets');
     this.load.image('person', 'person_small.png');
+    this.load.image('path', 'path.png');
+    this.load.image('walls', 'walls.png');
+    this.load.image('orb', 'orb.png');
   }
 
   function create () {
-    player = this.physics.add.image(400, 300, 'person');
+    this.add.image(0, 0, 'path').setOrigin(0, 0).setScale(100);
 
+
+    walls = this.physics.add.staticGroup();
+
+    walls.create(400, 568, 'walls').setScale(2).refreshBody();
+    walls.create(600, 400, 'walls');
+    walls.create(50, 250, 'walls');
+    walls.create(750, 220, 'walls');
+
+    player = this.physics.add.image(400, 300, 'person');
+    orb = this.physics.add.image(500, 500, 'orb').setScale(0.2);
     player.setCollideWorldBounds(true);
+
+    this.physics.add.collider(player, walls);
+    this.physics.add.overlap(player, orb, getTheGoldenOrb, null, this);
+
+    scoreText = this.add.text(16,16, 'score: 0', {fontSize: '32px', fill: '#000'});
   }
 
   function update() {
@@ -61,5 +86,12 @@ export class InGameComponent implements OnInit {
       player.setVelocityY(0);
       player.setVelocityX(0);
     }
+  }
+
+  function getTheGoldenOrb (player, orb) {
+    orb.disableBody(true, true);
+
+    score += 1;
+    scoreText.setText('Score: ' + score);
   }
 }
