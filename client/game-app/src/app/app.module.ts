@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { InGameComponent } from './in-game/in-game.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    InGameComponent
+    InGameComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule
