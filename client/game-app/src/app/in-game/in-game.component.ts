@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
-import data_json from '../../assets/map.json';
+const data_json = require('../../assets/map.json');
+
 
 @Component({
   selector: 'app-in-game',
@@ -8,8 +9,8 @@ import data_json from '../../assets/map.json';
   styleUrls: ['./in-game.component.css']
 })
 export class InGameComponent implements OnInit {
-
-  var config = {
+  let config;
+  config = {
       type: Phaser.AUTO,
       width: window.innerWidth,
       height: window.innerHeight,
@@ -28,68 +29,77 @@ export class InGameComponent implements OnInit {
     };
 
 
-  var player;
-  var orb;
-  var walls;
+  let player;
+  let orb;
 
-  var score = 0;
-  var scoreText;
-  var game = new Phaser.Game(config);
+  let score = 0;
+  let scoreText;
+  const game = new Phaser.Game(config);
 
 
   function preload () {
     this.load.setBaseURL('../assets');
     this.load.image('person', 'person_small.png');
-    this.load.image('path', 'path.png');
-    this.load.image('walls', 'walls.png');
     this.load.image('orb', 'orb.png');
+    this.load.image('tiles', 'map-tileset.png');
+    this.load.tilemapTiledJSON('map', data_json);
   }
 
   function create () {
-    this.add.image(0, 0, 'path').setOrigin(0, 0).setScale(100);
 
 
-    walls = this.physics.add.staticGroup();
 
-    walls.create(400, 568, 'walls').setScale(2).refreshBody();
-    walls.create(600, 400, 'walls');
-    walls.create(50, 250, 'walls');
-    walls.create(750, 220, 'walls');
+    const map = this.make.tilemap({key: 'map'});
+    const tileset = map.addTilesetImage('map-tileset', 'tiles');
 
-    player = this.physics.add.image(400, 300, 'person');
+    const belowLayer = map.createStaticLayer('Below Player', tileset, 0, 0);
+    const worldLayer = map.createStaticLayer('World', tileset, 0, 0);
+    const aboveLayer = map.createStaticLayer('Above Player', tileset, 0, 0);
+
+    player = this.physics.add.image(400, 300, 'person').setScale(0.5);
     orb = this.physics.add.image(500, 500, 'orb').setScale(0.2);
     player.setCollideWorldBounds(true);
 
-    this.physics.add.collider(player, walls);
     this.physics.add.overlap(player, orb, getTheGoldenOrb, null, this);
 
-    scoreText = this.add.text(16,16, 'score: 0', {fontSize: '32px', fill: '#000'});
+    scoreText = this.add.text(16, 16, 'score: 0', {fontSize: '32px', fill: '#000'});
+
+    worldLayer.setCollisionByProperty({ collides: true });
+    this.physics.add.collider(player, worldLayer);
+
+    // const camera = this.cameras.main;
+    // camera.startFollow(player);
+    // camera.setBounds(0, 0, config.width, config.heigth);
+
   }
 
-  function update() {
+  function update(time, delta) {
+    const speed = 175;
+    const prevVelocity = player.body.velocity.clone();
 
-    let cursors = this.input.keyboard.createCursorKeys();
+    const cursors = this.input.keyboard.createCursorKeys();
+    player.body.setVelocity(0);
 
     if (cursors.left.isDown) {
-      player.setVelocityX(-160);
+      player.body.setVelocityX(-100);
 
     } else if (cursors.right.isDown) {
-      player.setVelocityX(160);
+      player.body.setVelocityX(100);
 
-    } else if (cursors.up.isDown) {
-      player.setVelocityY(-160);
+    }
+
+    if (cursors.up.isDown) {
+      player.body.setVelocityY(-100);
 
     } else if (cursors.down.isDown) {
-      player.setVelocityY(160);
+      player.body.setVelocityY(100);
 
-    } else {
-      player.setVelocityY(0);
-      player.setVelocityX(0);
     }
+    player.body.velocity.normalize().scale(speed);
   }
 
-  function getTheGoldenOrb (player, orb) {
-    orb.disableBody(true, true);
+  function getTheGoldenOrb (_player, _orb) {
+    _orb.disableBody(true, true);
 
     score += 1;
     scoreText.setText('Score: ' + score);
