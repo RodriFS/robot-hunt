@@ -28,8 +28,12 @@ io.on('connection', (socket) => {
     io.emit('gameStart', players);
   });
 
-  socket.on('coordinates', (message) => {
-    io.emit('coordinates', message);
+  socket.on('keyboardCoordinates', (message) => {
+    io.emit('keyboardCoordinates', message);
+  });
+
+  socket.on('mouseCoordinates', (message) => {
+    io.emit('mouseCoordinates', message);
   });
 
 

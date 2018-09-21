@@ -32,7 +32,6 @@ export class PlayerSelectComponent implements OnInit {
     this.gameSvc.getMessages();
     this.gameSvc.observable.subscribe(msg => {
       this.msg = this.gameSvc.subject.getValue();
-      console.log(msg, this.msg);
       if (this.msg && this.msg.player === 'player1' && this.msg.status === true) {
         this.selectedPlayer1 = true;
       } else if (this.msg && this.msg.player === 'player2' && this.msg.status === true) {

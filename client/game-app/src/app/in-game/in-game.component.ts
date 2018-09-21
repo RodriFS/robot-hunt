@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
 const data_json = require('../../assets/map.json');
 import { loadGame } from '../scripts/game';
-import { PlayerSelectComponent } from '../player-select/player-select.component';
+import { GameService } from '../game.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,12 +12,14 @@ import { Router } from '@angular/router';
 })
 export class InGameComponent implements OnInit {
 
-  // constructor(private playerSelect: PlayerSelectComponent, private router: Router) {
-    // console.log(this.playerSelect)
-    // if (!this.playerSelect.selectedPlayer1 || !this.playerSelect.selectedPlayer2) {
-    //   this.router.navigate(['/select']);
-    // }
-  // }
+  constructor(private gameSvc: GameService, private router: Router) {
+    this.gameSvc.observable.subscribe(data => {
+      if (!data) {
+        this.router.navigate(['/select']);
+      }
+    });
+
+  }
 
   ngOnInit() {
     this.game = loadGame();
