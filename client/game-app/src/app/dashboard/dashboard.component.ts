@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  playerList: string[] = [];
+
+  constructor(private gameSvc: GameService) {
+    // gameSvc.announcePlayers$.subscribe(
+    //   player => {
+    //     this.playerList.push(`${player} is waiting`);
+    //   });
+  }
 
   ngOnInit() {
   }
+
 
 }

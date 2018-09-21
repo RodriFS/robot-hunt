@@ -1,25 +1,62 @@
 import Phaser from 'phaser';
 const data_json = require('../../../assets/map.json');
+import { PlayerSelectComponent } from '../../player-select/player-select.component';
+import * as io from 'socket.io-client';
+// console.log(PlayerSelectComponent.selectedPlayer)
+import { LocalSocket } from '../../lib/socket';
 
 export class GameScene extends Phaser.Scene {
 
+  private localSocket = LocalSocket.getInstance();
+
+  private url = 'http://localhost:5000';
+  private socket = io(this.url);
   player;
+  playerName;
   orb;
 
   score = 0;
   scoreText;
 
 
+
+  gameStartEmit(message) {
+    this.socket.emit('gameStart', message);
+  }
+
+  gameStartReceive() {
+      this.socket.on('gameStart', (data) => {
+        // console.log(data);
+      });
+  }
+
+  coordinatesEmit(message) {
+    this.socket.emit('coordinates', message);
+  }
+
+  coordinatesReceive() {
+    return new Promise((resolve, reject) => {
+      this.socket.on('coordinates', (data) => {
+        resolve(data);
+      });
+    }) ;
+  }
+
+
+
   preload () {
+
     this.load.setBaseURL('../assets');
     this.load.image('person', 'person_small.png');
     this.load.image('orb', 'orb.png');
     this.load.image('tiles', 'map-tileset.png');
     this.load.tilemapTiledJSON('map', data_json);
+    this.playerName = this.localSocket.getPlayerDataFromSelectPlayer().player;
   }
 
   create () {
-
+    this.gameStartEmit();
+    this.gameStartReceive();
 
 
     const map = this.make.tilemap({key: 'map'});
@@ -55,23 +92,38 @@ export class GameScene extends Phaser.Scene {
 
     const cursors = this.input.keyboard.createCursorKeys();
     this.player.body.setVelocity(0);
+    if (this.playerName === 'player1') {
+      if (cursors.left.isDown) {
+        this.player.body.setVelocityX(-100);
+        this.coordinatesEmit({x: this.player.x, y: this.player.y});
+      } else if (cursors.right.isDown) {
+        this.player.body.setVelocityX(100);
+        this.coordinatesEmit({x: this.player.x, y: this.player.y});
+      }
+      if (cursors.up.isDown) {
+        this.player.body.setVelocityY(-100);
+        this.coordinatesEmit({x: this.player.x, y: this.player.y});
+      } else if (cursors.down.isDown) {
+        this.player.body.setVelocityY(100);
+        this.coordinatesEmit({x: this.player.x, y: this.player.y});
+      }
+      this.player.body.velocity.normalize().scale(speed);
+    } else {
+      this.coordinatesReceive().then(coordinates => {
+        if (coordinates) {
+          this.player.x = coordinates.x;
+          this.player.y = coordinates.y;
+        }
+      });
 
-    if (cursors.left.isDown) {
-      this.player.body.setVelocityX(-100);
-
-    } else if (cursors.right.isDown) {
-      this.player.body.setVelocityX(100);
+    // this.input.mouse.capture = true;
 
     }
 
-    if (cursors.up.isDown) {
-      this.player.body.setVelocityY(-100);
 
-    } else if (cursors.down.isDown) {
-      this.player.body.setVelocityY(100);
 
-    }
-    this.player.body.velocity.normalize().scale(speed);
+
+
   }
 
   function getTheGoldenOrb (_player, _orb) {
@@ -80,5 +132,7 @@ export class GameScene extends Phaser.Scene {
     this.score += 1;
     this.scoreText.setText('Score: ' + this.score);
   }
+
+
 
 }

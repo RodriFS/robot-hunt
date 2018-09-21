@@ -1,6 +1,6 @@
 import 'phaser';
 import { GameScene } from './scenes/gameScene';
-import { BootScene } from "./scenes/bootScene";
+import { BootScene } from './scenes/bootScene';
 
 
 const config: GameConfig = {

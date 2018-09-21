@@ -1,16 +1,16 @@
-.app-dashboard {
+.app-player-select {
   margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.app-dashboard h1 {
+.app-player-select h1 {
   margin: 100px;
   font-family: arial;
 }
 
-.app-dashboard button {
+.app-player-select button {
   margin: 15px;
   width: 40vw;
   min-width: 500px;
@@ -21,6 +21,11 @@
   outline: none;
 }
 
-.app-dashboard :hover {
+.app-player-select :hover {
   color: grey;
+}
+
+.selected {
+  background-color: lightgray;
+  color: white;
 }
