@@ -18,6 +18,7 @@
   "homepage": "https://github.com/RodriFS/soloproject#readme",
   "dependencies": {
     "cors": "^2.8.4",
+    "easystarjs": "^0.4.3",
     "express": "^4.16.3",
     "nodemon": "^1.18.4",
     "phaser": "^3.12.0",

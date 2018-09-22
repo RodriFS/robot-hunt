@@ -4,12 +4,15 @@ const data_json = require('../../../assets/tilemaps/castle-map.json');
 import { PlayerSelectComponent } from '../../player-select/player-select.component';
 import * as io from 'socket.io-client';
 import { LocalSocket } from '../../lib/socket';
+import EasyStar from 'easystarjs';
 
 export class GameScene extends Phaser.Scene {
 
   private localSocket = LocalSocket.getInstance();
   private url = 'http://localhost:5000';
   private socket = io(this.url);
+
+
   player;
   playerName;
   orb;
@@ -100,6 +103,14 @@ export class GameScene extends Phaser.Scene {
     this.orbSpawnPoint = this.map.findObject('Objects', obj => obj.name === 'orbSpawn');
     this.orb = this.physics.add.image(this.orbSpawnPoint.x, this.orbSpawnPoint.y, 'orb').setScale(0.1);
 
+    const minions1 = data_json.layers[4].objects.filter(object => {
+      return object.name = 'minion1'
+    })
+    minions1.forEach(minion => {
+      const follower = this.physics.add.image(minion.x, minion.y, 'person').setOrigin(0, 0);
+      this.minions.push(follower);
+    })
+
 
     this.anims.create({
       key: 'left',
@@ -134,31 +145,31 @@ export class GameScene extends Phaser.Scene {
     this.lines = data_json.layers[4].objects[0].polyline;
     this.path = new Phaser.Curves.Path(this.lines[0].x, this.lines[0].y);
 
-    this.lines.forEach(line => {
-      this.path.lineTo(line.x, line.y);
-    });
+    // this.lines.forEach(line => {
+    //   this.path.lineTo(line.x, line.y);
+    // });
 
-    let delay = 0;
+    // let delay = 0;
 
-    Array(100).fill(0).forEach(x => {
-
-      const spacing = (200 * delay);
-      if (delay % 5 === 0) {
-        delay++;
-      } else {
-        delay += Math.floor(Math.random() * 10);
-      }
-      const follower = this.add.follower(this.path, 100, 100, 'person').setOrigin(0, 0);
-      follower.startFollow({
-        duration: 160000,
-        positionOnPath: true,
-        repeat: -1,
-        ease: 'Linear',
-        delay: spacing,
-        rotateToPath: true
-      });
-      this.minions.push(follower);
-    });
+    // Array(100).fill(0).forEach(x => {
+    //
+    //   const spacing = (200 * delay);
+    //   if (delay % 5 === 0) {
+    //     delay++;
+    //   } else {
+    //     delay += Math.floor(Math.random() * 10);
+    //   }
+    //   const follower = this.add.follower(this.path, 100, 100, 'person').setOrigin(0, 0);
+    //   follower.startFollow({
+    //     duration: 160000,
+    //     positionOnPath: true,
+    //     repeat: -1,
+    //     ease: 'Linear',
+    //     delay: spacing,
+    //     rotateToPath: true
+    //   });
+    //   this.minions.push(follower);
+    // });
 
 
 
@@ -239,6 +250,33 @@ export class GameScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, true, true, true, true);
     this.camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
 
+    this.finder = new EasyStar.js();
+
+
+    const chunk_size = 50;
+    const arr = data_json.layers[1].data;
+    const grid = arr.map( (e, i) => {
+    return i % chunk_size === 0 ? arr.slice(i, i + chunk_size) : null;
+      })
+      .filter((e) => e);
+
+    this.finder.setGrid(grid);
+
+    const acceptableTiles = [0];
+    // let prop = 0;
+    // Object.values(tileset.tileProperties).forEach(property => {
+    //   if (property.collides === false || Object.keys(property).length === 0) {
+    //     acceptableTiles.push(prop);
+    //   }
+    //   prop++;
+    // });
+
+    this.finder.setAcceptableTiles(acceptableTiles);
+    this.input.on('pointerup', this.handleClick);
+
+    this.marker = this.add.graphics();
+    this.marker.lineStyle(3, 0xffffff, 1);
+    this.marker.strokeRect(0, 0, this.map.tileWidth, this.map.tileHeight);
   }
 
   update(time, delta) {
@@ -333,27 +371,74 @@ export class GameScene extends Phaser.Scene {
       //   }
       // });
     }
-    this.minions.forEach(follower => {
 
-      if (follower.angle === -180) {
-        follower.anims.play('left', true);
-      } else if (follower.angle === 90) {
-        follower.anims.play('front', true);
-      } else if (follower.angle === -90) {
-        follower.anims.play('back', true);
-      } else if (follower.angle === 0) {
-        follower.anims.play('right', true);
-      }
-      follower.angle = 0;
-      this.minionCoords.push(follower.pathVector);
-    });
+    // this.minions.forEach(follower => {
+    //
+    //   if (follower.angle === -180) {
+    //     follower.anims.play('left', true);
+    //   } else if (follower.angle === 90) {
+    //     follower.anims.play('front', true);
+    //   } else if (follower.angle === -90) {
+    //     follower.anims.play('back', true);
+    //   } else if (follower.angle === 0) {
+    //     follower.anims.play('right', true);
+    //   }
+    //   follower.angle = 0;
+    //   this.minionCoords.push(follower.pathVector);
+    // });
 
-
-
-
-
+    var worldPoint = this.input.activePointer.positionToCamera(this.cameras.main);
+    var pointerTileX = this.map.worldToTileX(worldPoint.x);
+    var pointerTileY = this.map.worldToTileY(worldPoint.y);
+    this.marker.x = this.map.tileToWorldX(pointerTileX);
+    this.marker.y = this.map.tileToWorldY(pointerTileY);
+    // this.marker.setVisible(!this.checkCollision(pointerTileX,pointerTileY));
 
   }
+
+  handleClick = (pointer) => {
+    this.minions.forEach(minion => {
+      var x = 49;
+      var y = 0;
+      var fromX = Math.floor(minion.x/32);
+      var fromY = Math.floor(minion.y/32);
+      console.log('going from ('+fromX+','+fromY+') to ('+x+','+y+')');
+
+      this.finder.findPath(fromX, fromY, x, y, ( path ) => {
+          if (path === null) {
+              console.warn("Path was not found.");
+          } else {
+              // console.log(path);
+              this.moveCharacter(path, minion);
+          }
+      });
+      this.finder.calculate(); // don't forget, otherwise nothing happens
+    })
+  };
+
+  moveCharacter = (path, target) => {
+      // Sets up a list of tweens, one for each tile to walk, that will be chained by the timeline
+      var tweens = [];
+      for(var i = 0; i < path.length-1; i++){
+          var ex = path[i+1].x;
+          var ey = path[i+1].y;
+          tweens.push({
+              targets: target,
+              x: {value: ex*this.map.tileWidth, duration: 200},
+              y: {value: ey*this.map.tileHeight, duration: 200}
+          });
+      }
+
+      this.scene.scene.tweens.timeline({
+          tweens: tweens
+      });
+  };
+
+  getTileID = (x,y) => {
+      var tile = this.map.getTileAt(x, y);
+      return tile.index;
+  };
+
 
   function getTheGoldenOrb (_player, _orb) {
     _orb.disableBody(true, true);
@@ -370,7 +455,6 @@ export class GameScene extends Phaser.Scene {
     this.protected = false;
   }
 
-
   function killThePlayer (_player, _target) {
     this.coordinatesMouseReceive().then(coordinates => {
       if (coordinates) {
@@ -379,8 +463,7 @@ export class GameScene extends Phaser.Scene {
           this.player2Score += 1;
           this.player2ScoreText.setText('Player2: ' + this.player2Score);
         }
-    });
+      });
+    }
   }
-
-
 }
