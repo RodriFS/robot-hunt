@@ -36,6 +36,10 @@ io.on('connection', (socket) => {
     io.emit('mouseCoordinates', message);
   });
 
+  socket.on('minionCoordinates', (message) => {
+    io.emit('minionCoordinates', message);
+  });
+
 
 
 

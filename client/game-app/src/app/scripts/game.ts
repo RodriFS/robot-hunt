@@ -7,7 +7,7 @@ const config: GameConfig = {
   version: '1.0',
   width: window.innerWidth,
   height: window.innerHeight,
-  zoom: 3,
+  zoom: 1,
   type: Phaser.AUTO,
   parent: 'game',
   physics: {
