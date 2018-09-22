@@ -1,10 +1,8 @@
 import Phaser from 'phaser';
-const data_json = require('../../../assets/map.json');
-const path_json = require('../../../assets/paths.json');
+const data_json = require('../../../assets/tilemaps/castle-map.json');
 
 import { PlayerSelectComponent } from '../../player-select/player-select.component';
 import * as io from 'socket.io-client';
-// console.log(PlayerSelectComponent.selectedPlayer)
 import { LocalSocket } from '../../lib/socket';
 
 export class GameScene extends Phaser.Scene {
@@ -22,6 +20,7 @@ export class GameScene extends Phaser.Scene {
   camera;
   path;
   spawnPoint;
+  orbSpawnPoint;
   minions = [];
   minionCoords = [];
 
@@ -70,13 +69,13 @@ export class GameScene extends Phaser.Scene {
   preload () {
 
     this.load.setBaseURL('../assets');
-    this.load.spritesheet('person', 'person.png', { frameWidth: 32 , frameHeight: 32});
-    // this.load.image('minion', 'person_small.png');
-    this.load.image('target', 'target.png');
-    this.load.image('orb', 'orb.png');
-    this.load.image('tiles', 'map-tileset.png');
-    this.load.image('tunnelTile', 'tunnelTile.png');
-    this.load.image('airTile', 'airTile.png');
+    this.load.spritesheet('person', '/sprites/person.png', { frameWidth: 32 , frameHeight: 32});
+    this.load.image('target', '/sprites/target.png');
+    this.load.image('orb', '/sprites/orb.png');
+    this.load.image('tiles', '/tilesets/map-tileset.png');
+    this.load.image('castleTiles', '/tilesets/castle_tileset.png');
+    this.load.image('tunnelTile', '/tilesets/tunnelTile.png');
+    this.load.image('airTile', '/tilesets/airTile.png');
     this.load.tilemapTiledJSON('map', data_json);
     this.playerName = this.localSocket.getPlayerDataFromSelectPlayer().player;
 
@@ -85,15 +84,22 @@ export class GameScene extends Phaser.Scene {
   create () {
 
     this.map = this.make.tilemap({key: 'map'});
+    const castleTileset = this.map.addTilesetImage('castle-tileset', 'castleTiles');
+
     const tileset = this.map.addTilesetImage('map-tileset', 'tiles');
 
-    const belowLayer = this.map.createStaticLayer('Below Player', tileset, 0, 0);
-    const worldLayer = this.map.createStaticLayer('World', tileset, 0, 0);
+    const belowLayer = this.map.createStaticLayer('Below Player', castleTileset, 0, 0);
+    const worldLayer = this.map.createStaticLayer('World', castleTileset, 0, 0);
     const aboveLayer = this.map.createDynamicLayer('Above Player', tileset, 0, 0);
+    const mask = this.map.createDynamicLayer('Mask', castleTileset, 0, 0);
     aboveLayer.setDepth(10);
+    aboveLayer.setDepth(20);
 
     this.spawnPoint = this.map.findObject('Objects', obj => obj.name === 'Spawn Point');
-    this.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, 'person').setOffset(0, 16);
+    this.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, 'person').setOffset(0, 0);
+    this.orbSpawnPoint = this.map.findObject('Objects', obj => obj.name === 'orbSpawn');
+    this.orb = this.physics.add.image(this.orbSpawnPoint.x, this.orbSpawnPoint.y, 'orb').setScale(0.1);
+
 
     this.anims.create({
       key: 'left',
@@ -125,10 +131,10 @@ export class GameScene extends Phaser.Scene {
       frameRate: 20,
     });
 
-    this.lines = data_json.layers[3].objects[0].polyline;
+    this.lines = data_json.layers[4].objects[0].polyline;
     this.path = new Phaser.Curves.Path(this.lines[0].x, this.lines[0].y);
 
-    lines.forEach(line => {
+    this.lines.forEach(line => {
       this.path.lineTo(line.x, line.y);
     });
 
@@ -142,7 +148,7 @@ export class GameScene extends Phaser.Scene {
       } else {
         delay += Math.floor(Math.random() * 10);
       }
-      const follower = this.add.follower(this.path, -100, -100, 'person').setOrigin(0, 0);
+      const follower = this.add.follower(this.path, 100, 100, 'person').setOrigin(0, 0);
       follower.startFollow({
         duration: 160000,
         positionOnPath: true,
@@ -176,7 +182,7 @@ export class GameScene extends Phaser.Scene {
     // }
 
     this.target = this.physics.add.image(400, 400, 'target').setScale(0.1);
-    this.orb = this.physics.add.image(500, 500, 'orb').setScale(0.2);
+
     this.player.setCollideWorldBounds(true);
     this.target.setDepth(20);
     this.target.alpha = 0.5;
@@ -225,6 +231,9 @@ export class GameScene extends Phaser.Scene {
     this.camera = this.cameras.main;
     if (this.playerName === 'player1') {
       this.camera.startFollow(this.player);
+    } else {
+      this.camera.scrollX = 800;
+      this.camera.scrollY = 800;
     }
 
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, true, true, true, true);

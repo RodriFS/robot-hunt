@@ -406,7 +406,7 @@
         {
          "columns":3,
          "firstgid":1,
-         "image":"map-tileset.png",
+         "image":"..\/tilesets\/map-tileset.png",
          "imageheight":128,
          "imagewidth":96,
          "margin":0,

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
-const data_json = require('../../assets/map.json');
 import { loadGame } from '../scripts/game';
 import { GameService } from '../game.service';
 import { Router } from '@angular/router';
