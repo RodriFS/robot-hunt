@@ -1,6 +1,6 @@
 import 'phaser';
 import { GameScene } from './scenes/gameScene';
-import { BootScene } from './scenes/bootScene';
+import { MenuScene } from './scenes/menuScene';
 
 
 const config: GameConfig = {
@@ -16,7 +16,7 @@ const config: GameConfig = {
         gravity: { y: 0 }
     }
   },
-  scene: [GameScene],
+  scene: [GameScene, MenuScene],
   input: {
     keyboard: true,
     mouse: true,
