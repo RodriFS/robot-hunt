@@ -25,6 +25,7 @@ export class MenuScene extends Phaser.Scene {
         game.events.on('addScorePlayer2', function () {
             this.score += 1;
             player2Score.setText('Player2: ' + this.score);
+            game.scene.restart();
         }, this);
     }
 }

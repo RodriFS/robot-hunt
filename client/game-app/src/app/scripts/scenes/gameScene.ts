@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-const data_json = require('../../../assets/tilemaps/castle-map.json');
+const data_json = require('../../../assets/tilemaps/factory-map.json');
 
 import { PlayerSelectComponent } from '../../player-select/player-select.component';
 import * as io from 'socket.io-client';
@@ -30,11 +30,6 @@ export class GameScene extends Phaser.Scene {
   minionCoords = [];
 
 
-  // player1Score = 0;
-  // player2Score = 0;
-  // player1ScoreText;
-  // player2ScoreText;
-
   coordinatesKeyboardEmit(message) {
     this.socket.emit('keyboardCoordinates', message);
   }
@@ -59,26 +54,15 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  // coordinatesMinionEmit(message) {
-  //   this.socket.emit('minionCoordinates', message);
-  // }
-  //
-  // coordinatesMinionReceive(message) {
-  //   return new Promise((resolve, reject) => {
-  //     this.socket.on('minionCoordinates', (data) => {
-  //       resolve(data);
-  //     });
-  //   });
-  // }
-
   preload () {
 
     this.load.setBaseURL('../assets');
-    this.load.spritesheet('person', '/sprites/person.png', { frameWidth: 32 , frameHeight: 32});
+    this.load.spritesheet('person', '/sprites/robot_spritesheet.png', { frameWidth: 32 , frameHeight: 32 });
     this.load.image('target', '/sprites/target.png');
     this.load.image('orb', '/sprites/orb.png');
+    this.load.spritesheet('playerPos', '/sprites/player_position.png', { frameWidth: 300 , frameHeight: 300 });
     this.load.image('tiles', '/tilesets/map-tileset.png');
-    this.load.image('castleTiles', '/tilesets/castle_tileset.png');
+    this.load.image('castleTiles', '/tilesets/factory_tileset.png');
     this.load.image('tunnelTile', '/tilesets/tunnelTile.png');
     this.load.image('airTile', '/tilesets/airTile.png');
     this.load.tilemapTiledJSON('map', data_json);
@@ -87,53 +71,65 @@ export class GameScene extends Phaser.Scene {
   }
 
   create () {
+
+
     this.map = this.make.tilemap({key: 'map'});
-    const castleTileset = this.map.addTilesetImage('castle-tileset', 'castleTiles');
+    const castleTileset = this.map.addTilesetImage('factory_tileset', 'castleTiles');
 
     const tileset = this.map.addTilesetImage('map-tileset', 'tiles');
 
-    const belowLayer = this.map.createStaticLayer('Below Player', castleTileset, 0, 0);
+    const belowLayer = this.map.createStaticLayer('Below Layer', castleTileset, 0, 0);
     const worldLayer = this.map.createStaticLayer('World', castleTileset, 0, 0);
-    const aboveLayer = this.map.createDynamicLayer('Above Player', tileset, 0, 0);
-    // const mask = this.map.createDynamicLayer('Mask', castleTileset, 0, 0);
+    const aboveLayer = this.map.createDynamicLayer('Above Layer', castleTileset, 0, 0);
     aboveLayer.setDepth(10);
-    // aboveLayer.setDepth(20);
 
     this.spawnPoint = this.map.findObject('Objects', obj => obj.name === 'Spawn Point');
     this.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, 'person').setOffset(0, 0);
+
+    if (this.playerName === 'player1') {
+      this.playerPos = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, 'playerPos').setOffset(0, 0);
+      this.playerPos.alpha = 0.3;
+    }
+
     this.orbSpawnPoint = this.map.findObject('Objects', obj => obj.name === 'orbSpawn');
     this.orb = this.physics.add.image(this.orbSpawnPoint.x, this.orbSpawnPoint.y, 'orb').setScale(0.1);
 
     this.anims.create({
       key: 'left',
-      frames: this.anims.generateFrameNumbers('person', { start: 4, end: 7}),
-      frameRate: 10,
+      frames: [{ key: 'person', frame: 1}, { key: 'person', frame: 19}],
+      frameRate: 2,
       repeat: -1
     });
     this.anims.create({
       key: 'right',
-      frames: this.anims.generateFrameNumbers('person', { start: 8, end: 11}),
-      frameRate: 10,
+      frames: [{ key: 'person', frame: 0}, { key: 'person', frame: 18}],
+      frameRate: 2,
       repeat: -1
     });
     this.anims.create({
       key: 'front',
-      frames: this.anims.generateFrameNumbers('person', { start: 0, end: 3}),
-      frameRate: 10,
+      frames: [{ key: 'person', frame: 0}, { key: 'person', frame: 18}],
+      frameRate: 2,
       repeat: -1
     });
     this.anims.create({
       key: 'back',
-      frames: this.anims.generateFrameNumbers('person', { start: 12, end: 15}),
-      frameRate: 10,
+      frames: [{ key: 'person', frame: 1}, { key: 'person', frame: 19}],
+      frameRate: 2,
       repeat: -1
     });
     this.anims.create({
       key: 'turn',
-      frames: this.anims.generateFrameNumbers('person', { frame: [0, 1, 2]}),
-      frameRate: 20,
+      frames: [{ key: 'person', frame: 0}, { key: 'person', frame: 18}],
+      frameRate: 2,
     });
-
+    if (this.playerName === 'player1') {
+      this.anims.create({
+        key: 'playerPos',
+        frames: this.anims.generateFrameNumbers('playerPos', { start: 0, end: 8}),
+        frameRate: 20,
+      });
+    }
 
     this.lines = this.map.findObject('Objects', obj => {
       if (obj.name === 'smallpath') {
@@ -177,52 +173,22 @@ export class GameScene extends Phaser.Scene {
     });
 
 
-
-
-    // if (this.playerName === 'player1') {
-    //   Array(100).fill(0).forEach(minion => {
-    //     minion = this.physics.add.image(Math.random() * 3200, Math.random() * 3200, 'minion').setScale(0.5);
-    //     this.minions.push(minion);
-    //     this.minionCoords.push({x: minion.x, y: minion.y});
-    //   });
-    //   this.coordinatesMinionEmit(this.minionCoords);
-    // } else {
-    //   this.coordinatesMinionReceive().then(coordinates => {
-    //     if (coordinates) {
-    //       this.minionCoords = coordinates;
-    //       coordinates.forEach(coord => {
-    //         const minion = this.physics.add.image(coord.x, coord.y, 'minion').setScale(0.5);
-    //         this.minions.push(minion);
-    //       });
-    //     }
-    //   });
-    // }
-
-    this.target = this.physics.add.image(400, 400, 'target').setScale(0.1);
+    this.target = this.physics.add.image(400, 400, 'target').setScale(0.5);
 
     this.player.setCollideWorldBounds(true);
     this.target.setDepth(20);
-    this.target.alpha = 0.5;
+    this.target.alpha = 0.65;
 
 
     this.physics.add.overlap(this.player, this.orb, this.getTheGoldenOrb, null, this);
     this.physics.add.overlap(this.player, this.target, this.killThePlayer, null, this);
-
-
-    // this.player1ScoreText = this.add.text(0, 0, 'Player1: 0', {fontSize: '32px', fill: '#000'});
-    // this.player2ScoreText = this.add.text(0, 0, 'Player2: 0', {fontSize: '32px', fill: '#000'});
-    // this.player1ScoreText.fixedToCamera = true;
-    // this.player2ScoreText.fixedToCamera = true;
-    // this.player1ScoreText.cameraOffset.setTo(16, 16);
-    // this.player2ScoreText.cameraOffset.setTo(500, 16);
-
 
     worldLayer.setCollisionByProperty({ collides: true });
     this.physics.add.collider(this.player, worldLayer);
 
     this.tunnelTiles = this.physics.add.staticGroup();
     aboveLayer.forEachTile(tile => {
-      if (tile.index === 8) {
+      if (tile.index === 32) {
         const x = tile.getCenterX();
         const y = tile.getCenterY();
         const tunnelTile = this.tunnelTiles.create(x, y, 'tunnelTile');
@@ -233,7 +199,7 @@ export class GameScene extends Phaser.Scene {
 
     this.airTiles = this.physics.add.staticGroup();
     aboveLayer.forEachTile(tile => {
-      if (tile.index === 10) {
+      if (tile.index === 84) {
         const x = tile.getCenterX();
         const y = tile.getCenterY();
         const airTile = this.airTiles.create(x, y, 'airTile');
@@ -263,36 +229,40 @@ export class GameScene extends Phaser.Scene {
     const prevVelocity = this.player.body.velocity.clone();
     const cursors = this.input.keyboard.createCursorKeys();
 
+
     this.player.body.setVelocity(0);
 
     if (this.playerName === 'player1') {
+
+      this.playerPos.x = this.player.x;
+      this.playerPos.y = this.player.y;
+      this.playerPos.anims.play('playerPos', true);
+
       if (cursors.left.isDown) {
 
         this.player.body.setVelocityX(-80);
-        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y});
+        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y, keyboard: 'left'});
       } else if (cursors.right.isDown) {
 
         this.player.body.setVelocityX(80);
-        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y});
+        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y, keyboard: 'right'});
       } else {
         this.player.x = Phaser.Math.Snap.To(this.player.x, 8);
-        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y});
       }
       if (cursors.up.isDown) {
 
         this.player.body.setVelocityY(-80);
-        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y});
+        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y, keyboard: 'up'});
       } else if (cursors.down.isDown) {
 
         this.player.body.setVelocityY(80);
-        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y});
+        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y, keyboard: 'down'});
       } else {
         this.player.y = Phaser.Math.Snap.To(this.player.y, 8);
-        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y});
       }
 
-      this.player.body.velocity.normalize().scale(speed);
 
+      this.player.body.velocity.normalize().scale(speed);
 
       if (cursors.left.isDown) {
         this.player.anims.play('left', true);
@@ -303,9 +273,9 @@ export class GameScene extends Phaser.Scene {
       } else if (cursors.down.isDown) {
         this.player.anims.play('front', true);
       } else {
-        this.player.anims.stop();
+        this.coordinatesKeyboardEmit({x: this.player.x, y: this.player.y, keyboard: 'stop'});
+        this.player.anims.play('front', true);
       }
-
 
       this.coordinatesMouseReceive().then(coordinates => {
         if (coordinates) {
@@ -314,20 +284,23 @@ export class GameScene extends Phaser.Scene {
         }
       });
 
-      // this.minionCoords = [];
-      // this.minions.forEach(minion => {
-      //   minion.body.setVelocityX(-100);
-      //   minion.body.setVelocityY(-100);
-      //   this.minionCoords.push({x: minion.x, y: minion.y});
-      // });
-      // this.coordinatesMinionEmit(this.minionCoords);
-
-
     } else {
       this.coordinatesKeyboardReceive().then(coordinates => {
         if (coordinates) {
           this.player.x = coordinates.x;
           this.player.y = coordinates.y;
+
+          if (coordinates.keyboard === 'left') {
+            this.player.anims.play('left', true);
+          } else if (coordinates.keyboard === 'right') {
+            this.player.anims.play('right', true);
+          } else if (coordinates.keyboard === 'up') {
+            this.player.anims.play('back', true);
+          } else if (coordinates.keyboard === 'down') {
+            this.player.anims.play('front', true);
+          } else {
+            this.player.anims.play('front', true);
+          }
         }
       });
 
@@ -346,18 +319,9 @@ export class GameScene extends Phaser.Scene {
         this.physics.moveTo(this.target, this.input.x + this.cameras.main.scrollX, this.input.y + this.camera.scrollY, null, 20);
       }
 
-      // this.coordinatesMinionReceive().then(coordinates => {
-      //   if (coordinates) {
-      //     this.minions.forEach(minion => {
-      //       minion.x = coordinates[this.minions.indexOf(minion)].x;
-      //       minion.y = coordinates[this.minions.indexOf(minion)].y;
-      //     });
-      //   }
-      // });
     }
 
     this.minions.forEach(follower => {
-
       if (follower.angle === -180) {
         follower.anims.play('left', true);
       } else if (follower.angle === 90) {
@@ -394,8 +358,6 @@ export class GameScene extends Phaser.Scene {
       if (coordinates) {
         if (coordinates.isDown && !this.protected) {
           _player.disableBody(true, true);
-          // this.player2Score += 1;
-          // this.player2ScoreText.setText('Player2: ' + this.player2Score);
           this.events.emit('addScorePlayer2');
         }
       });
