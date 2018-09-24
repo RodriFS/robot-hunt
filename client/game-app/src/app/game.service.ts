@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as io from 'socket.io-client';
-import { LocalSocket } from './lib/socket';
+import { Socket } from './lib/socket';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
-  private url = 'http://localhost:5000';
-  private socket = io(this.url);
-  private localSocket = LocalSocket.getInstance();
+  // private url = 'http://rodrifs.local:5000';
+  // private socket = io(this.url);
+  private socket = Socket.getInstance();
 
 
   private prevmsg;
@@ -25,12 +25,12 @@ export class GameService {
   // }
 
   sendMessage(message) {
-    this.socket.emit('players', message);
-    this.localSocket.sendPlayerDataToGame(message);
+    this.socket.socket.emit('players', message);
+    this.socket.sendPlayerDataToGame(message);
   }
 
   getMessages() {
-      this.socket.on('start', (data) => {
+      this.socket.socket.on('start', (data) => {
         this.subject.next(data);
 
       });
@@ -40,4 +40,5 @@ export class GameService {
   //   });
   //   return observable;
   // }
+ }
 }

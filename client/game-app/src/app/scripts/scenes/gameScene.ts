@@ -2,8 +2,7 @@ import Phaser from 'phaser';
 const data_json = require('../../../assets/tilemaps/factory-map.json');
 
 import { PlayerSelectComponent } from '../../player-select/player-select.component';
-import * as io from 'socket.io-client';
-import { LocalSocket } from '../../lib/socket';
+import { Socket } from '../../lib/socket';
 
 export class GameScene extends Phaser.Scene {
 
@@ -11,9 +10,7 @@ export class GameScene extends Phaser.Scene {
        super({ key: 'GameScene', active: true });
    }
 
-  private localSocket = LocalSocket.getInstance();
-  private url = 'http://localhost:5000';
-  private socket = io(this.url);
+  private socket = Socket.getInstance();
 
   player;
   playerName;
@@ -28,27 +25,31 @@ export class GameScene extends Phaser.Scene {
   orbSpawnPoint;
   minions = [];
   minionCoords = [];
+  belowLayer;
+  worldLayer;
+  aboveLayer;
+  marker;
 
 
   coordinatesKeyboardEmit(message) {
-    this.socket.emit('keyboardCoordinates', message);
+    this.socket.socket.emit('keyboardCoordinates', message);
   }
 
   coordinatesKeyboardReceive() {
     return new Promise((resolve, reject) => {
-      this.socket.on('keyboardCoordinates', (data) => {
+      this.socket.socket.on('keyboardCoordinates', (data) => {
         resolve(data);
       });
     });
   }
 
   coordinatesMouseEmit(message) {
-    this.socket.emit('mouseCoordinates', message);
+    this.socket.socket.emit('mouseCoordinates', message);
   }
 
   coordinatesMouseReceive() {
     return new Promise((resolve, reject) => {
-      this.socket.on('mouseCoordinates', (data) => {
+      this.socket.socket.on('mouseCoordinates', (data) => {
         resolve(data);
       });
     });
@@ -59,14 +60,11 @@ export class GameScene extends Phaser.Scene {
     this.load.setBaseURL('../assets');
     this.load.spritesheet('person', '/sprites/robot_spritesheet.png', { frameWidth: 32 , frameHeight: 32 });
     this.load.image('target', '/sprites/target.png');
-    this.load.image('orb', '/sprites/orb.png');
+    this.load.image('orb', '/sprites/controller.png');
     this.load.spritesheet('playerPos', '/sprites/player_position.png', { frameWidth: 300 , frameHeight: 300 });
-    this.load.image('tiles', '/tilesets/map-tileset.png');
     this.load.image('castleTiles', '/tilesets/factory_tileset.png');
-    this.load.image('tunnelTile', '/tilesets/tunnelTile.png');
-    this.load.image('airTile', '/tilesets/airTile.png');
     this.load.tilemapTiledJSON('map', data_json);
-    this.playerName = this.localSocket.getPlayerDataFromSelectPlayer().player;
+    this.playerName = this.socket.getPlayerDataFromSelectPlayer().player;
 
   }
 
@@ -76,12 +74,10 @@ export class GameScene extends Phaser.Scene {
     this.map = this.make.tilemap({key: 'map'});
     const castleTileset = this.map.addTilesetImage('factory_tileset', 'castleTiles');
 
-    const tileset = this.map.addTilesetImage('map-tileset', 'tiles');
-
-    const belowLayer = this.map.createStaticLayer('Below Layer', castleTileset, 0, 0);
-    const worldLayer = this.map.createStaticLayer('World', castleTileset, 0, 0);
-    const aboveLayer = this.map.createDynamicLayer('Above Layer', castleTileset, 0, 0);
-    aboveLayer.setDepth(10);
+    this.belowLayer = this.map.createStaticLayer('Below Layer', castleTileset, 0, 0);
+    this.worldLayer = this.map.createStaticLayer('World', castleTileset, 0, 0);
+    this.aboveLayer = this.map.createDynamicLayer('Above Layer', castleTileset, 0, 0);
+    this.aboveLayer.setDepth(10);
 
     this.spawnPoint = this.map.findObject('Objects', obj => obj.name === 'Spawn Point');
     this.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, 'person').setOffset(0, 0);
@@ -92,7 +88,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.orbSpawnPoint = this.map.findObject('Objects', obj => obj.name === 'orbSpawn');
-    this.orb = this.physics.add.image(this.orbSpawnPoint.x, this.orbSpawnPoint.y, 'orb').setScale(0.1);
+    this.orb = this.physics.add.image(this.orbSpawnPoint.x, this.orbSpawnPoint.y, 'orb');
 
     this.anims.create({
       key: 'left',
@@ -182,34 +178,11 @@ export class GameScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.player, this.orb, this.getTheGoldenOrb, null, this);
     this.physics.add.overlap(this.player, this.target, this.killThePlayer, null, this);
+    // this.killThePlayer.bind(this)
+    // this.input.on('pointerdown', this.killThePlayer)
 
-    worldLayer.setCollisionByProperty({ collides: true });
-    this.physics.add.collider(this.player, worldLayer);
-
-    this.tunnelTiles = this.physics.add.staticGroup();
-    aboveLayer.forEachTile(tile => {
-      if (tile.index === 32) {
-        const x = tile.getCenterX();
-        const y = tile.getCenterY();
-        const tunnelTile = this.tunnelTiles.create(x, y, 'tunnelTile');
-
-        aboveLayer.removeTileAt(tile.x, tile.y);
-      }
-    });
-
-    this.airTiles = this.physics.add.staticGroup();
-    aboveLayer.forEachTile(tile => {
-      if (tile.index === 84) {
-        const x = tile.getCenterX();
-        const y = tile.getCenterY();
-        const airTile = this.airTiles.create(x, y, 'airTile');
-        aboveLayer.removeTileAt(tile.x, tile.y);
-      }
-    });
-
-    this.physics.add.overlap(this.player, this.tunnelTiles, this.protectThePlayer, null, this);
-    this.physics.add.overlap(this.player, this.airTiles, this.unprotectThePlayer, null, this);
-
+    this.worldLayer.setCollisionByProperty({ collides: true });
+    this.physics.add.collider(this.player, this.worldLayer);
 
     this.camera = this.cameras.main;
     if (this.playerName === 'player1') {
@@ -221,6 +194,10 @@ export class GameScene extends Phaser.Scene {
 
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, true, true, true, true);
     this.camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
+    // this.marker = this.add.graphics().setDepth(30);
+    // this.marker.lineStyle(3, 0xffffff, 1);
+    // this.marker.strokeRect(0, 0, this.map.tileWidth, this.map.tileHeight);
   }
 
   update(time, delta) {
@@ -284,6 +261,18 @@ export class GameScene extends Phaser.Scene {
         }
       });
 
+      // const currentTile = this.map.getTileAt(
+      //   this.map.worldToTileX(this.player.x),
+      //   this.map.worldToTileX(this.player.y),
+      //   true,
+      //   this.aboveLayer
+      // );
+      //
+      // if (currentTile.properties.protected) {
+      //   this.marker.x = currentTile.x;
+      //   this.marker.y = currentTile.y;
+      // }
+
     } else {
       this.coordinatesKeyboardReceive().then(coordinates => {
         if (coordinates) {
@@ -345,22 +334,27 @@ export class GameScene extends Phaser.Scene {
     this.events.emit('addScorePlayer1');
   }
 
-  protectThePlayer() {
-    this.protected = true;
-  }
+  killThePlayer = (_player, _target) => {
+    const currentTile = this.map.getTileAt(
+      this.map.worldToTileX(this.player.x),
+      this.map.worldToTileX(this.player.y),
+      true,
+      this.aboveLayer
+    );
 
-  unprotectThePlayer() {
-    this.protected = false;
-  }
-
-  killThePlayer (_player, _target) {
-    this.coordinatesMouseReceive().then(coordinates => {
-      if (coordinates) {
-        if (coordinates.isDown && !this.protected) {
-          _player.disableBody(true, true);
-          this.events.emit('addScorePlayer2');
+    if (!currentTile.properties.protected) {
+      this.coordinatesMouseReceive().then(coordinates => {
+        if (coordinates) {
+          if (coordinates.isDown && !this.protected) {
+            // _player.disableBody(true, true);
+            this.events.emit('addScorePlayer2');
+          }
         }
       });
     }
+
+
+
+
   }
 }
