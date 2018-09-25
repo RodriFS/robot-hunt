@@ -12,6 +12,8 @@ import { getPaths,  updateFollowers } from './followers/paths';
 import { getPhysics } from './physics/physics';
 import { getCameras } from './cameras/cameras';
 import { getGraphics } from './graphics/graphics';
+import { getMusic } from './music/music';
+import { preloader } from './preloader/preloader';
 
 
 
@@ -68,6 +70,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload () {
+
+    preloader.call(this);
+
     assetsLoader.call(this);
   }
 
@@ -83,6 +88,13 @@ export class GameScene extends Phaser.Scene {
     getPhysics.call(this);
     getCameras.call(this);
     getGraphics.call(this);
+    getMusic.call(this);
+    const onEvent = () => this.music_loop.play();
+    this.time.addEvent({
+      delay: 2513.0839002267575,
+      callback: onEvent,
+      callbackScope: this,
+    });
   }
 
   update(time, delta) {

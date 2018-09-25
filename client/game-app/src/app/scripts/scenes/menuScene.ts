@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Socket } from '../../lib/socket';
-import { getMusic } from './music/music';
+
 
 export class MenuScene extends Phaser.Scene {
 
@@ -14,27 +14,16 @@ export class MenuScene extends Phaser.Scene {
   private music_loop;
 
   preload() {
+
     this.load.setBaseURL('../../assets');
     this.load.image('start', '/sprites/start.png');
     this.load.image('p1_score', '/sprites/p1_score.png');
     this.load.image('p2_score', '/sprites/p1_score.png');
     this.load.bitmapFont('pixelFont', '/font/font_black.png', '../../assets/font/font.xml');
-    this.load.audio('music_intro', [
-      '/music/Battle_Intro.mp3'
-    ]);
-    this.load.audio('music_loop', [
-      '/music/Battle_Loop.mp3'
-    ]);
   }
 
   create () {
-        getMusic.call(this);
-        const onEvent = () => this.music_loop.play();
-        this.time.addEvent({
-          delay: 2513.0839002267575,
-          callback: onEvent,
-          callbackScope: this,
-        });
+
 
         this.physics.add.sprite(10, 10, 'p1_score').setOrigin(0, 0);
         this.physics.add.sprite(window.innerWidth - 230, 10, 'p2_score').setOrigin(0, 0);

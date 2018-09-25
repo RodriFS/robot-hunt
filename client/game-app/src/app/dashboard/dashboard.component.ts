@@ -10,12 +10,7 @@ export class DashboardComponent implements OnInit {
 
   playerList: string[] = [];
 
-  constructor(private gameSvc: GameService) {
-    // gameSvc.announcePlayers$.subscribe(
-    //   player => {
-    //     this.playerList.push(`${player} is waiting`);
-    //   });
-  }
+  constructor(private gameSvc: GameService) {}
 
   ngOnInit() {
   }

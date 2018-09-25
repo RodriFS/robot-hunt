@@ -30,7 +30,7 @@ export class InGameComponent implements OnInit {
       this.router.navigate(['/']);
       setTimeout(() => {
           window.location.reload();
-      }, 3000);
+      }, 1000);
     }
 
   }

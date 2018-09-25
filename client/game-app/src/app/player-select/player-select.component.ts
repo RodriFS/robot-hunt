@@ -37,7 +37,7 @@ export class PlayerSelectComponent implements OnInit {
         this.socket = this.socket.reconnectSocket();
         setTimeout(() => {
             window.location.reload();
-        }, 3000);
+        }, 1000);
 
       }
 

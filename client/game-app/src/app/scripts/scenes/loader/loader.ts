@@ -8,5 +8,10 @@ export function assetsLoader() {
       this.load.spritesheet('playerPos', '/sprites/player_position.png', { frameWidth: 300 , frameHeight: 300 });
       this.load.image('castleTiles', '/tilesets/factory_tileset.png');
       this.load.tilemapTiledJSON('map', data_json);
-    
+      this.load.audio('music_intro', [
+        '/music/Battle_Intro.mp3'
+      ]);
+      this.load.audio('music_loop', [
+        '/music/Battle_Loop.mp3'
+      ]);
 }
