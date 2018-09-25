@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GameService } from '../game.service';
 import { Router } from '@angular/router';
+import { Socket } from '../lib/socket';
 
 @Component({
   selector: 'app-player-select',
@@ -9,96 +10,86 @@ import { Router } from '@angular/router';
 })
 export class PlayerSelectComponent implements OnInit {
 
+  private socket = Socket.getInstance();
   selectedPlayer1 = false;
   selectedPlayer2 = false;
   selectedLocalPlayer1 = false;
   selectedLocalPlayer2 = false;
+  waiting = true;
+  message = 'Waiting for second player...';
   player1;
   player2;
 
   playerList: string[] = [];
 
-  constructor(private gameSvc: GameService, private router: Router) {
-
-
-    // gameSvc.announcePlayers$.subscribe(
-    //   player => {
-    //     this.playerList.push(`${player}`);
-    //     console.log(this.playerList)
-    //   });
-  }
+  constructor(private gameSvc: GameService, private router: Router) {}
 
   ngOnInit() {
-    this.gameSvc.getMessages();
-    this.gameSvc.observable.subscribe(msg => {
-      this.msg = this.gameSvc.subject.getValue();
-      if (this.msg && this.msg.player === 'player1' && this.msg.status === true) {
-        this.selectedPlayer1 = true;
-      } else if (this.msg && this.msg.player === 'player2' && this.msg.status === true) {
-        this.selectedPlayer2 = true;
+
+    this.socket.socket.emit('waiting', 'waiting?');
+    this.socket.socket.on('waiting', (data) => {
+      this.waiting = data.waiting;
+      this.message = data.message;
+
+      if (data.reconnect) {
+        this.socket.socket.disconnect();
+            // console.log(this)
+        this.socket = this.socket.reconnectSocket();
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);
+
       }
-      if (this.selectedPlayer1 && this.selectedPlayer2) {
-        this.router.navigate(['/game']);
-      }
+
     });
 
+    this.socket.socket.on('start', (data) => {
+      if (data && data.player === 'player1' && data.status === true) {
+          this.selectedPlayer1 = true;
+        } else if (data && data.player === 'player2' && data.status === true) {
+          this.selectedPlayer2 = true;
+        }
+        if (this.selectedPlayer1 && this.selectedPlayer2) {
 
-
+          this.router.navigate(['/game']);
+        }
+    });
   }
 
 
   onSelectPlayer1(): void {
-    // this.gameSvc.broadcastPlayers('player1:' + this.selectedPlayer1);
     if (!this.selectedLocalPlayer2 && !this.selectedPlayer1) {
-      this.gameSvc.sendMessage({
+      const message = {
         player: 'player1',
-        status: true
-      });
+        status: true,
+      };
+      this.socket.socket.emit('start', message);
+      this.socket.sendPlayerDataToGame(message);
       this.selectedPlayer1 = true;
       this.selectedLocalPlayer1 = true;
     }
-
-
-
   }
 
   onSelectPlayer2(): void {
-    // this.gameSvc.broadcastPlayers('player2');
     if (!this.selectedLocalPlayer1 && !this.selectedPlayer2) {
-      this.gameSvc.sendMessage({
+      const message = {
         player: 'player2',
-        status: true
-      });
+        status: true,
+      };
+      this.socket.socket.emit('start', message);
+      this.socket.sendPlayerDataToGame(message);
       this.selectedPlayer2 = true;
       this.selectedLocalPlayer2 = true;
     }
-    if (this.selectedPlayer1 && this.selectedPlayer2) {
-      this.router.navigate(['/game']);
-    }
-
   }
 
-  // onGoBack(): void {
-  //   // this.selectedPlayer1 = false;
-  //   // this.selectedLocalPlayer1 = false;
-  //   // this.selectedPlayer2 = false;
-  //   // this.selectedLocalPlayer2 = false;
-  //   // this.gameSvc.sendMessage({
-  //   //   player: 'player1',
-  //   //   status: false
-  //   // });
-  //   // this.gameSvc.sendMessage({
-  //   //   player: 'player2',
-  //   //   status: false
-  //   // });
-  // }
-  // postPlayer(): void {
-  //   this.gameSvc.sendMessage();
-  // }
-
-  // getPlayers(): void {
-  //   this.gameSvc.getPlayers()
-  //     .subscribe(msg => console.log(msg));
-  // }
+  resetPlayers(waiting): void {
+    if (waiting) {
+      this.selectedPlayer1 = false;
+      this.selectedLocalPlayer1 = false;
+      this.selectedPlayer2 = false;
+      this.selectedLocalPlayer2 = false;
+    }
+  }
 
 }

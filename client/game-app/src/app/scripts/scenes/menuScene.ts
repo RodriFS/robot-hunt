@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { Socket } from '../../lib/socket';
+import { getMusic } from './music/music';
 
 export class MenuScene extends Phaser.Scene {
 
@@ -9,19 +10,35 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private socket = Socket.getInstance();
+  private music_intro;
+  private music_loop;
 
   preload() {
-    this.load.image('start', '../../assets/sprites/start.png');
-    this.load.image('p1_score', '../../assets/sprites/p1_score.png');
-    this.load.image('p2_score', '../../assets/sprites/p1_score.png');
-    this.load.bitmapFont('pixelFont', '../../assets/font/font_black.png', '../../assets/font/font.xml');
-
+    this.load.setBaseURL('../../assets');
+    this.load.image('start', '/sprites/start.png');
+    this.load.image('p1_score', '/sprites/p1_score.png');
+    this.load.image('p2_score', '/sprites/p1_score.png');
+    this.load.bitmapFont('pixelFont', '/font/font_black.png', '../../assets/font/font.xml');
+    this.load.audio('music_intro', [
+      '/music/Battle_Intro.mp3'
+    ]);
+    this.load.audio('music_loop', [
+      '/music/Battle_Loop.mp3'
+    ]);
   }
 
   create () {
+        getMusic.call(this);
+        const onEvent = () => this.music_loop.play();
+        this.time.addEvent({
+          delay: 2513.0839002267575,
+          callback: onEvent,
+          callbackScope: this,
+        });
+
         this.physics.add.sprite(10, 10, 'p1_score').setOrigin(0, 0);
         this.physics.add.sprite(window.innerWidth - 230, 10, 'p2_score').setOrigin(0, 0);
-        const startMessage = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'start');
+        const startMessage = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'start').setScale(1.05);
 
         const player1Score = this.add.bitmapText(20, 25, 'pixelFont', 'Robot: 0', 38).setScale(0.5);
         const player2Score = this.add.bitmapText(window.innerWidth - 220, 25, 'pixelFont', 'Human: 0', 38).setScale(0.5);
@@ -29,17 +46,16 @@ export class MenuScene extends Phaser.Scene {
         this.playerName = this.socket.getPlayerDataFromSelectPlayer().player;
 
         const startMessageText = this.add.bitmapText(
-          window.innerWidth / 2 - 600 / 2,
-          window.innerHeight / 2 - 200 / 2,
+          window.innerWidth / 2,
+          window.innerHeight / 2,
           'pixelFont',
-          '', 38).setScale(0.5);
-
+          '', 38).setOrigin(1).setScale(0.5);
 
         const endMessage = this.add.bitmapText(
-          window.innerWidth / 2 - 600 / 2,
-          window.innerHeight / 2 - 30 ,
+          window.innerWidth / 2,
+          window.innerHeight / 2,
           'pixelFont',
-          '', 38).setScale(0.5);
+          '', 38).setOrigin(1).setScale(0.5);
 
         if (this.playerName === 'player1') {
           startMessageText.setText(
@@ -52,6 +68,7 @@ export class MenuScene extends Phaser.Scene {
          ''
          'click to continue...'
        ]);
+
         } else {
           startMessageText.setText(
             ['There are rumors that a',
@@ -65,17 +82,17 @@ export class MenuScene extends Phaser.Scene {
          ]);
         }
 
-
         this.input.on('pointerdown', () => {
           startMessage.visible = false;
           startMessageText.visible = false;
+          endMessage.visible = false;
         });
 
-        //  Grab a reference to the Game Scene
         const game = this.scene.get('GameScene');
         startMessage.visible = true;
         endMessage.visible = true;
-        //  Listen for events from it
+
+
         game.events.on('addScorePlayer1', function () {
           this.score += 1;
           player1Score.setText('Robot: ' + this.score);
@@ -85,6 +102,7 @@ export class MenuScene extends Phaser.Scene {
           } else {
             endMessage.setText(['You lost!', 'Humanity was obliterated!', 'click to continue playing.']);
           }
+          game.scene.restart();
         }, this);
 
 
@@ -96,11 +114,12 @@ export class MenuScene extends Phaser.Scene {
           player2Score.setText('Human: ' + this.score);
 
           if (this.playerName === 'player1') {
-            endMessage.setText(['You lost!', 'Humanity was saved!']);
+            endMessage.setText(['You lost!', 'Humanity was saved!', 'click to continue playing.']);
           } else {
-            endMessage.setText(['You won!', 'Humanity was saved!']);
+            endMessage.setText(['You won!', 'Humanity was saved!', 'click to continue playing.']);
           }
           game.scene.restart();
         }, this);
+      }
     }
 }

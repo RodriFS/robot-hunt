@@ -1,5 +1,8 @@
-<body class="app-player-select">
-  <!-- <h1>PLEASE SELECT</h1> -->
-  <button type="submit" name="player1" [class.selected]="selectedPlayer1" (click)="onSelectPlayer1()">Player 1</button>
-  <button type="submit" name="player2" [class.selected]="selectedPlayer2" (click)="onSelectPlayer2()">Player 2</button>
+<body *ngIf='waiting === false' class="app-player-select">
+  <h1 class= 'select'>Select Player: Are you a robot?</h1>
+  <button type="submit" name="player1" [class.selected]="selectedPlayer1" (click)="onSelectPlayer1()">I'm a Robot</button>
+  <button type="submit" name="player2" [class.selected]="selectedPlayer2" (click)="onSelectPlayer2()">I'm a Human</button>
+</body>
+<body *ngIf='waiting === true' class="app-player-select">
+  <h1 class='waiting' >{{message}}</h1>
 </body>

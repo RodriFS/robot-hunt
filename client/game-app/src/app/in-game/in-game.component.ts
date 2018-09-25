@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { loadGame } from '../scripts/game';
 import { GameService } from '../game.service';
 import { Router } from '@angular/router';
+import { Socket } from '../lib/socket';
 
 @Component({
   selector: 'app-in-game',
@@ -10,17 +11,27 @@ import { Router } from '@angular/router';
   styleUrls: ['./in-game.component.css']
 })
 export class InGameComponent implements OnInit {
+  private socket = Socket.getInstance();
 
-  constructor(private gameSvc: GameService, private router: Router) {
-    this.gameSvc.observable.subscribe(data => {
-      if (!data) {
-        this.router.navigate(['/select']);
-      }
-    });
-
-  }
+  constructor(private gameSvc: GameService, private router: Router) {}
 
   ngOnInit() {
-    this.game = loadGame();
+    this.socket.socket.on('waiting', (data) => {
+      if (data.waiting) {
+          this.router.navigate(['/']);
+        }
+      this.socket.socket.emit('waiting', data);
+    });
+
+    try {
+      this.playerName = this.socket.getPlayerDataFromSelectPlayer().player;
+      this.game = loadGame();
+    } catch {
+      this.router.navigate(['/']);
+      setTimeout(() => {
+          window.location.reload();
+      }, 3000);
+    }
+
   }
 }
