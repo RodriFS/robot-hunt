@@ -6,7 +6,8 @@ export class MenuScene extends Phaser.Scene {
 
   constructor () {
         super({ key: 'UIScene', active: true });
-        this.score = 0;
+        this.scoreP1 = 0;
+        this.scoreP2 = 0;
   }
 
   private socket = Socket.getInstance();
@@ -44,7 +45,7 @@ export class MenuScene extends Phaser.Scene {
           window.innerWidth / 2,
           window.innerHeight / 2,
           'pixelFont',
-          '', 38).setOrigin(1).setScale(0.5);
+          '', 40).setOrigin(1).setScale(0.5);
 
         if (this.playerName === 'player1') {
           startMessageText.setText(
@@ -83,8 +84,10 @@ export class MenuScene extends Phaser.Scene {
 
 
         game.events.on('addScorePlayer1', function () {
-          this.score += 1;
-          player1Score.setText('Robot: ' + this.score);
+          startMessage.visible = true;
+          endMessage.visible = true;
+          this.scoreP1 += 1;
+          player1Score.setText('Robot: ' + this.scoreP1);
 
           if (this.playerName === 'player1') {
             endMessage.setText(['You won!', 'Humanity was obliterated!', 'click to continue playing.']);
@@ -98,9 +101,8 @@ export class MenuScene extends Phaser.Scene {
         game.events.on('addScorePlayer2', function () {
           startMessage.visible = true;
           endMessage.visible = true;
-          this.score += 1;
-
-          player2Score.setText('Human: ' + this.score);
+          this.scoreP2 += 1;
+          player2Score.setText('Human: ' + this.scoreP2);
 
           if (this.playerName === 'player1') {
             endMessage.setText(['You lost!', 'Humanity was saved!', 'click to continue playing.']);

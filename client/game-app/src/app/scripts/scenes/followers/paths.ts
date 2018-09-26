@@ -29,7 +29,7 @@ export function getPaths() {
 
         const follower = this.add.follower(this.path, 100, 100, 'person').setOrigin(0, 0);
         follower.startFollow({
-          duration: 25000 + duration,
+          duration: 30000 + duration,
           positionOnPath: true,
           repeat: -1,
           ease: 'Linear',
@@ -57,3 +57,15 @@ export function updateFollowers() {
     this.minionCoords.push(follower.pathVector);
   });
 }
+
+
+// 2752 = 91.733333
+// 1728 = 57.6
+// 1152 = 38.4
+// 3200 = 106.66666
+// 1280 =
+// 768  =
+// 1344 =
+// 2112 =
+// 2240 =
+// 2112 =
