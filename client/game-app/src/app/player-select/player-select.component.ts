@@ -9,7 +9,6 @@ import { Socket } from '../lib/socket';
   styleUrls: ['./player-select.component.css']
 })
 export class PlayerSelectComponent implements OnInit {
-
   private socket = Socket.getInstance();
   selectedPlayer1 = false;
   selectedPlayer2 = false;
@@ -25,43 +24,38 @@ export class PlayerSelectComponent implements OnInit {
   constructor(private gameSvc: GameService, private router: Router) {}
 
   ngOnInit() {
-
     this.socket.socket.emit('waiting', 'waiting?');
-    this.socket.socket.on('waiting', (data) => {
+    this.socket.socket.on('waiting', data => {
       this.waiting = data.waiting;
       this.message = data.message;
 
       if (data.reconnect) {
         this.socket.socket.disconnect();
-            // console.log(this)
+        // console.log(this)
         this.socket = this.socket.reconnectSocket();
         setTimeout(() => {
-            window.location.reload();
+          window.location.reload();
         }, 1000);
-
       }
-
     });
 
-    this.socket.socket.on('start', (data) => {
+    this.socket.socket.on('start', data => {
       if (data && data.player === 'player1' && data.status === true) {
-          this.selectedPlayer1 = true;
-        } else if (data && data.player === 'player2' && data.status === true) {
-          this.selectedPlayer2 = true;
-        }
-        if (this.selectedPlayer1 && this.selectedPlayer2) {
-
-          this.router.navigate(['/game']);
-        }
+        this.selectedPlayer1 = true;
+      } else if (data && data.player === 'player2' && data.status === true) {
+        this.selectedPlayer2 = true;
+      }
+      if (this.selectedPlayer1 && this.selectedPlayer2) {
+        this.router.navigate(['/game']);
+      }
     });
   }
-
 
   onSelectPlayer1(): void {
     if (!this.selectedLocalPlayer2 && !this.selectedPlayer1) {
       const message = {
         player: 'player1',
-        status: true,
+        status: true
       };
       this.socket.socket.emit('start', message);
       this.socket.sendPlayerDataToGame(message);
@@ -74,7 +68,7 @@ export class PlayerSelectComponent implements OnInit {
     if (!this.selectedLocalPlayer1 && !this.selectedPlayer2) {
       const message = {
         player: 'player2',
-        status: true,
+        status: true
       };
       this.socket.socket.emit('start', message);
       this.socket.sendPlayerDataToGame(message);
@@ -91,5 +85,4 @@ export class PlayerSelectComponent implements OnInit {
       this.selectedLocalPlayer2 = false;
     }
   }
-
 }

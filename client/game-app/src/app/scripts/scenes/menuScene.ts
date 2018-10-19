@@ -90,9 +90,9 @@ export class MenuScene extends Phaser.Scene {
           player1Score.setText('Robot: ' + this.scoreP1);
 
           if (this.playerName === 'player1') {
-            endMessage.setText(['You won!', 'Humanity was obliterated!', 'click to continue playing.']);
+            endMessage.setText(['You won!', '', 'Humanity was obliterated!', '',  'click to continue playing.']);
           } else {
-            endMessage.setText(['You lost!', 'Humanity was obliterated!', 'click to continue playing.']);
+            endMessage.setText(['You lost!', '', 'Humanity was obliterated!', '', 'click to continue playing.']);
           }
           game.scene.restart();
         }, this);
@@ -105,9 +105,9 @@ export class MenuScene extends Phaser.Scene {
           player2Score.setText('Human: ' + this.scoreP2);
 
           if (this.playerName === 'player1') {
-            endMessage.setText(['You lost!', 'Humanity was saved!', 'click to continue playing.']);
+            endMessage.setText(['You lost!', '', 'Humanity was saved!', '', 'click to continue playing.']);
           } else {
-            endMessage.setText(['You won!', 'Humanity was saved!', 'click to continue playing.']);
+            endMessage.setText(['You won!', '', 'Humanity was saved!', '', 'click to continue playing.']);
           }
           game.scene.restart();
         }, this);

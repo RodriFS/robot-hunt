@@ -8,20 +8,17 @@ import { getPlayer1, updatePlayer1 } from './player1/player1';
 import { getPlayer2, updatePlayer2 } from './player2/player2';
 import { getOrb } from './orb/orb';
 import { getAnims } from './graphics/anims';
-import { getPaths,  updateFollowers } from './followers/paths';
+import { getPaths, updateFollowers } from './followers/paths';
 import { getPhysics } from './physics/physics';
 import { getCameras } from './cameras/cameras';
 import { getGraphics } from './graphics/graphics';
 import { getMusic } from './music/music';
 import { preloader } from './preloader/preloader';
 
-
-
 export class GameScene extends Phaser.Scene {
-
-  constructor () {
-       super({ key: 'GameScene', active: true });
-   }
+  constructor() {
+    super({ key: 'GameScene', active: true });
+  }
 
   private socket = Socket.getInstance();
 
@@ -43,15 +40,13 @@ export class GameScene extends Phaser.Scene {
   private aboveLayer;
   private marker;
 
-
-
   coordinatesKeyboardEmit(message) {
     this.socket.socket.emit('keyboardCoordinates', message);
   }
 
   coordinatesKeyboardReceive() {
     return new Promise((resolve, reject) => {
-      this.socket.socket.on('keyboardCoordinates', (data) => {
+      this.socket.socket.on('keyboardCoordinates', data => {
         resolve(data);
       });
     });
@@ -63,20 +58,19 @@ export class GameScene extends Phaser.Scene {
 
   coordinatesMouseReceive() {
     return new Promise((resolve, reject) => {
-      this.socket.socket.on('mouseCoordinates', (data) => {
+      this.socket.socket.on('mouseCoordinates', data => {
         resolve(data);
       });
     });
   }
 
-  preload () {
-
+  preload() {
     preloader.call(this);
 
     assetsLoader.call(this);
   }
 
-  create () {
+  create() {
     this.playerName = this.socket.getPlayerDataFromSelectPlayer().player;
 
     getMaps.call(this);
@@ -93,12 +87,11 @@ export class GameScene extends Phaser.Scene {
     this.time.addEvent({
       delay: 2513.0839002267575,
       callback: onEvent,
-      callbackScope: this,
+      callbackScope: this
     });
   }
 
   update(time, delta) {
-
     if (this.playerName === 'player1') {
       updatePlayer1.call(this);
     } else {
@@ -107,12 +100,12 @@ export class GameScene extends Phaser.Scene {
     updateFollowers.call(this);
   }
 
-  getTheGoldenOrb (_player, _orb) {
+  getTheGoldenOrb(_player, _orb) {
     _orb.disableBody(true, true);
     this.events.emit('addScorePlayer1');
   }
 
-  killThePlayer (_player, _target) {
+  killThePlayer(_player, _target) {
     const currentTile = this.map.getTileAt(
       this.map.worldToTileX(this.player.x),
       this.map.worldToTileX(this.player.y),
@@ -129,6 +122,5 @@ export class GameScene extends Phaser.Scene {
         }
       });
     }
-
   }
 }

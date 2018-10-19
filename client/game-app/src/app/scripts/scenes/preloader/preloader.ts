@@ -1,5 +1,4 @@
 export function preloader() {
-
   const progressBar = this.add.graphics();
   const progressBox = this.add.graphics();
 
@@ -10,8 +9,8 @@ export function preloader() {
     y: 180,
     text: 'Loading...',
     style: {
-        font: '20px monospace',
-        fill: '#ffffff'
+      font: '20px monospace',
+      fill: '#ffffff'
     }
   });
 
@@ -19,13 +18,13 @@ export function preloader() {
 
   progressBox.fillStyle(0x222222, 0.8);
   progressBox.fillRect(width / 2 - 200, 200, 400, 50);
-  this.load.on('progress', function (value) {
+  this.load.on('progress', function(value) {
     progressBar.clear();
     progressBar.fillStyle(0xffffff, 1);
     progressBar.fillRect(width / 2 - 190, 210, 380, 30);
   });
 
-  this.load.on('complete', function () {
+  this.load.on('complete', function() {
     progressBar.destroy();
     progressBox.destroy();
     loadingText.destroy();

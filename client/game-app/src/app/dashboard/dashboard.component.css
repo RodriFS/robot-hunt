@@ -1,11 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Press+Start+2P');
 
-
 .app-dashboard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #2D2D43;
+  background-color: #2d2d43;
   height: 100vh;
 }
 
@@ -34,5 +33,3 @@
 .app-dashboard button:hover {
   color: white;
 }
-
-/* yellow =  #FFE361*/

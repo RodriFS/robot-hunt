@@ -14,11 +14,8 @@ import { PlayerSelectComponent } from './player-select/player-select.component';
     DashboardComponent,
     PlayerSelectComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
+  imports: [BrowserModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

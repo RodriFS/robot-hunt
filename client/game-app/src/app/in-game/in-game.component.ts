@@ -16,10 +16,10 @@ export class InGameComponent implements OnInit {
   constructor(private gameSvc: GameService, private router: Router) {}
 
   ngOnInit() {
-    this.socket.socket.on('waiting', (data) => {
+    this.socket.socket.on('waiting', data => {
       if (data.waiting) {
-          this.router.navigate(['/']);
-        }
+        this.router.navigate(['/']);
+      }
       this.socket.socket.emit('waiting', data);
     });
 
@@ -29,9 +29,8 @@ export class InGameComponent implements OnInit {
     } catch {
       this.router.navigate(['/']);
       setTimeout(() => {
-          window.location.reload();
+        window.location.reload();
       }, 1000);
     }
-
   }
 }

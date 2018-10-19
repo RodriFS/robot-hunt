@@ -39,8 +39,19 @@ export function updatePlayer2() {
     this.camera.scrollX += this.input.activePointer.event.movementX;
     this.camera.scrollY += this.input.activePointer.event.movementY;
 
-    this.physics.moveTo(this.target, this.input.x + this.cameras.main.scrollX, this.input.y + this.camera.scrollY, null, 20);
-    this.physics.moveTo(this.light, this.input.x + this.cameras.main.scrollX, this.input.y + this.camera.scrollY, null, 20);
-
+    this.physics.moveTo(
+      this.target,
+      this.input.x + this.cameras.main.scrollX,
+      this.input.y + this.camera.scrollY,
+      null,
+      20
+    );
+    this.physics.moveTo(
+      this.light,
+      this.input.x + this.cameras.main.scrollX,
+      this.input.y + this.camera.scrollY,
+      null,
+      20
+    );
   }
 }

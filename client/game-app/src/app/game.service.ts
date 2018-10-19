@@ -7,5 +7,4 @@ import { Socket } from './lib/socket';
 @Injectable({
   providedIn: 'root'
 })
-export class GameService {
-}
+export class GameService {}
