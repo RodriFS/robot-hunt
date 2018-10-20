@@ -51,5 +51,5 @@ You'll need to have npm to install the dependencies. Follow the instructions sup
 
 # Contributing
 
-Any contribution is welcome!, feel free to modify this game and make it your own. I hope you have as much fun doing it as i had.
+Any contribution is welcome!, feel free to modify this game and make it your own. I hope you have as much fun doing it as I had.
 
