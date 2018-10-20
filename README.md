@@ -1,4 +1,3 @@
-# Robot Hunt
 ![Robot Hunt](https://i.imgur.com/NF0ymnF.png)
 
 Robot Hunt is an online two-player game for web.
@@ -6,6 +5,18 @@ Robot Hunt is an online two-player game for web.
 Player 1: You are a sentient robot. Find the life controller before the humans find you to obliterate the whole humanity. You can disguise yourself as one of the other robots in order to avoid the humans.
 
 Player 2: There are rumors that a robot has become sentient. Find the sentient robot before it gets to the life controller  and obliterates the whole humanity.
+
+# Tech Stack
+
+### Front end
+[Angular](https://angular.io/)
+
+[Phaser](https://phaser.io/)
+
+### Back end
+[Express](https://expressjs.com/)
+
+[Socket.io](https://socket.io/)
 
 # Screenshots
 ![Gameplay](https://i.imgur.com/OYAdwwR.png)
@@ -45,18 +56,6 @@ npm i
 ```
 ng serve --open
 ```
-
-# Tech Stack
-
-### Front end
-[Angular](https://angular.io/)
-
-[Phaser](https://phaser.io/)
-
-### Back end
-[Express](https://expressjs.com/)
-
-[Socket.io](https://socket.io/)
 
 # Developers
 
