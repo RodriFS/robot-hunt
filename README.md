@@ -29,7 +29,6 @@ You'll need to have npm to install the dependencies. Follow the instructions sup
 `cd robot-hunt/server`
 
 2. Install the dependencies
-
 `npm i`
 
 3. Run the server!
