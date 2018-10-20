@@ -49,4 +49,7 @@ You'll need to have npm to install the dependencies. Follow the instructions sup
 
 - Rodrigo Sanchez - [Github](https://github.com/RodriFS/) - [Linkedin](https://www.linkedin.com/in/rodrigo-f-sanchez/)
 
+# Contributing
+
+Any contribution is welcome!, feel free to modify this game and make it your own. I hope you have as much fun doing it as i had.
 
