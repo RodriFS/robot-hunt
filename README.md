@@ -23,8 +23,6 @@ Player 2: There are rumors that a robot has become sentient. Find the sentient r
 # Getting started
 You'll need to have npm to install the dependencies. Follow the instructions supplied below.
 
-# Installation
-
 1. Clone this repo and enter to the server!
 
 ```
