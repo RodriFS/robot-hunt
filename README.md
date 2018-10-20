@@ -1,4 +1,5 @@
 # Robot Hunt
+![Robot Hunt](https://i.imgur.com/NF0ymnF.png)
 
 Robot Hunt is an online two-player game for web.
 
@@ -7,7 +8,7 @@ Player 1: You are a sentient robot. Find the life controller before the humans f
 Player 2: There are rumors that a robot has become sentient. Find the sentient robot before it gets to the life controller  and obliterates the whole humanity.
 
 # Screenshots
-
+![Gameplay](https://i.imgur.com/OYAdwwR.png)
 # Getting started
 You'll need to have npm to install the dependencies. Follow the instructions supplied below.
 
