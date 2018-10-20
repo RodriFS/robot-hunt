@@ -25,35 +25,26 @@ You'll need to have npm to install the dependencies. Follow the instructions sup
 
 1. Clone this repo and enter to the server!
 
-```
-git clone https://github.com/RodriFS/robot-hunt.git
-cd robot-hunt/server
-```
+`git clone https://github.com/RodriFS/robot-hunt.git`
+`cd robot-hunt/server`
 
 2. Install the dependencies
-```
-npm i
-```
+
+`npm i`
 
 3. Run the server!
-```
-nodemon index.js
-```
+`nodemon index.js`
 
 4. Enter to the client
-```
-cd robot-hunt/client/game-app
-```
+`cd robot-hunt/client/game-app`
 
 4. Install the dependencies
-```
-npm i
-```
+`npm i`
+
 
 5. Run the game!
-```
-ng serve --open
-```
+`ng serve --open`
+
 
 # Developers
 
