@@ -1,36 +1,15 @@
 {
-  "name": "solo-project",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "robot-hunt",
+  "version": "0.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "run-p install:client install:server",
+    "install:server": "cd server && npm i",
+    "install:client": "cd client/game-app && npm i",
+    "start": "run-p start:client start:server",
+    "start:server": " cd server && node index.js",
+    "start:client": "cd client/game-app && ng serve --open"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RodriFS/soloproject.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/RodriFS/soloproject/issues"
-  },
-  "homepage": "https://github.com/RodriFS/soloproject#readme",
   "dependencies": {
-    "cors": "^2.8.4",
-    "easystarjs": "^0.4.3",
-    "express": "^4.16.3",
-    "nodemon": "^1.18.4",
-    "phaser": "^3.12.0",
-    "phaser-ce": "^2.11.0",
-    "socket.io": "^2.1.1",
-    "socket.io-client": "^2.1.1",
-    "uuid": "^3.3.2"
-  },
-  "devDependencies": {
-    "eslint": "^5.6.0",
-    "tslint": "^5.11.0",
-    "tslint-angular": "^1.1.2",
-    "typescript": "^3.0.3"
+    "npm-run-all": "^4.1.3"
   }
 }
