@@ -8,7 +8,6 @@ const cors = require('cors');
 app.use(cors);
 
 let players = [];
-let playerNum;
 
 io.on('connect', socket => {
   players.push(socket);
