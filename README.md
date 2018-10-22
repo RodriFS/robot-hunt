@@ -31,7 +31,7 @@ You'll need to have npm to install the dependencies. Follow the instructions sup
 2. Install the dependencies
 `npm i`
 
-3. Run the server!
+3. Run the server
 `nodemon index.js`
 
 4. Enter to the client
@@ -40,10 +40,10 @@ You'll need to have npm to install the dependencies. Follow the instructions sup
 4. Install the dependencies
 `npm i`
 
-
 5. Run the game!
-`ng serve --open`
+`ng serve`
 
+6. Share localhost and open it on http://localhost:4200 in two or more computers
 
 # Developers
 
