@@ -20,6 +20,9 @@ Player 2: There are rumors that a robot has become sentient. Find the sentient r
 
 # Screenshots
 ![Gameplay](https://i.imgur.com/OYAdwwR.png)
+
+[Gameplay!](https://player.vimeo.com/video/296414365)
+
 # Getting started
 You'll need to have npm to install the dependencies. Follow the instructions supplied below.
 
