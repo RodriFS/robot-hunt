@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import Phaser from 'phaser';
 import { loadGame } from '../scripts/game';
 import { GameService } from '../game.service';
 import { Router } from '@angular/router';
@@ -11,9 +10,12 @@ import { Socket } from '../lib/socket';
   styleUrls: ['./in-game.component.css']
 })
 export class InGameComponent implements OnInit {
-  private socket = Socket.getInstance();
+  public socket = Socket.getInstance();
 
-  constructor(private gameSvc: GameService, private router: Router) {}
+  constructor(public gameSvc: GameService, public router: Router) {}
+
+  playerName;
+  game;
 
   ngOnInit() {
     this.socket.socket.on('waiting', data => {

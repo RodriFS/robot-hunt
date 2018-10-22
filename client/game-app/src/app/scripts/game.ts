@@ -1,9 +1,8 @@
-import 'phaser';
-import { GameScene } from './scenes/gameScene';
-import { MenuScene } from './scenes/menuScene';
+import Phaser from 'phaser';
+import GameScene from './scenes/gameScene';
+import MenuScene from './scenes/menuScene';
 
-
-const config: GameConfig = {
+const config: Phaser.GameConfig = {
   version: '1.0',
   width: window.innerWidth,
   height: window.innerHeight,
@@ -13,7 +12,7 @@ const config: GameConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-        gravity: { y: 0 }
+      gravity: { y: 0 }
     }
   },
   scene: [GameScene, MenuScene],
@@ -29,14 +28,10 @@ const config: GameConfig = {
 };
 
 export class Game extends Phaser.Game {
-  constructor(config: GameConfig) {
+  constructor(config) {
     super(config);
   }
 }
-
-// window.onload = () => {
-//   const game = new Game(config);
-// };
 
 export const loadGame = () => {
   return new Game(config);

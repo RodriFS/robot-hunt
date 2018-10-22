@@ -1,5 +1,3 @@
-const data_json = require('../../../../assets/tilemaps/factory-map.json');
-
 export function assetsLoader() {
   this.load.setBaseURL('../assets');
   this.load.spritesheet('person', '/sprites/robot_spritesheet.png', {
@@ -13,7 +11,10 @@ export function assetsLoader() {
     frameHeight: 300
   });
   this.load.image('castleTiles', '/tilesets/factory_tileset.png');
-  this.load.tilemapTiledJSON('map', data_json);
+  this.load.tilemapTiledJSON(
+    'map',
+    '../../../../assets/tilemaps/factory-map.json'
+  );
   this.load.audio('music_intro', ['/music/Battle_Intro.mp3']);
   this.load.audio('music_loop', ['/music/Battle_Loop.mp3']);
 }

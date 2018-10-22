@@ -9,7 +9,7 @@ import { Socket } from '../lib/socket';
   styleUrls: ['./player-select.component.css']
 })
 export class PlayerSelectComponent implements OnInit {
-  private socket = Socket.getInstance();
+  public socket = Socket.getInstance();
   selectedPlayer1 = false;
   selectedPlayer2 = false;
   selectedLocalPlayer1 = false;
@@ -21,7 +21,7 @@ export class PlayerSelectComponent implements OnInit {
 
   playerList: string[] = [];
 
-  constructor(private gameSvc: GameService, private router: Router) {}
+  constructor(public gameSvc: GameService, public router: Router) {}
 
   ngOnInit() {
     this.socket.socket.emit('waiting', 'waiting?');

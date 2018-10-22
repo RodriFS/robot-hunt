@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+
 export function getPlayer1() {
   this.spawnPoint = this.map.findObject(
     'Objects',

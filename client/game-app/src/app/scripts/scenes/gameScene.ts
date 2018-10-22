@@ -1,4 +1,3 @@
-import { PlayerSelectComponent } from '../../player-select/player-select.component';
 import { Socket } from '../../lib/socket';
 
 import Phaser from 'phaser';
@@ -15,36 +14,39 @@ import { getGraphics } from './graphics/graphics';
 import { getMusic } from './music/music';
 import { preloader } from './preloader/preloader';
 
-export class GameScene extends Phaser.Scene {
+export default class GameScene extends Phaser.Scene {
   constructor() {
     super({ key: 'GameScene', active: true });
   }
 
-  private socket = Socket.getInstance();
+  public socket = Socket.getInstance();
 
-  private player;
-  private playerName;
-  private orb;
-  private map;
-  private lines;
-  private protected = false;
-  private tunnelTiles;
-  private camera;
-  private path;
-  private spawnPoint;
-  private orbSpawnPoint;
-  private minions = [];
-  private minionCoords = [];
-  private belowLayer;
-  private worldLayer;
-  private aboveLayer;
-  private marker;
+  public player: Phaser.physics;
+  public playerName;
+  public orb: Phaser.physics;
+  public map: Phaser.map;
+  public lines: Phaser.lines;
+  public protected = false;
+  public camera: Phaser.cameras;
+  public path: Phaser.path;
+  public spawnPoint: Phaser.spawnPoint;
+  public orbSpawnPoint: Phaser.spawnPoint;
+  public minions = [];
+  public minionCoords = [];
+  public belowLayer: Phaser.belowLayer;
+  public worldLayer: Phaser.worldLayer;
+  public aboveLayer: Phaser.aboveLayer;
+  public marker: Phaser.marker;
+  public music_loop: Phaser.music_loop;
+  public events: Phaser.events;
+  public time: Phaser.time;
+  public isDown: boolean;
 
   coordinatesKeyboardEmit(message) {
     this.socket.socket.emit('keyboardCoordinates', message);
   }
 
-  coordinatesKeyboardReceive() {
+  coordinatesKeyboardReceive(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.socket.socket.on('keyboardCoordinates', data => {
         resolve(data);
@@ -56,7 +58,7 @@ export class GameScene extends Phaser.Scene {
     this.socket.socket.emit('mouseCoordinates', message);
   }
 
-  coordinatesMouseReceive() {
+  coordinatesMouseReceive(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.socket.socket.on('mouseCoordinates', data => {
         resolve(data);
@@ -91,13 +93,13 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  update(time, delta) {
+  update() {
+    updateFollowers.call(this);
     if (this.playerName === 'player1') {
       updatePlayer1.call(this);
     } else {
       updatePlayer2.call(this);
     }
-    updateFollowers.call(this);
   }
 
   getTheGoldenOrb(_player, _orb) {

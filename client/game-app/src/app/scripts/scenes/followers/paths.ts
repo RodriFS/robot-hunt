@@ -1,4 +1,6 @@
-export function getPaths() {
+import Phaser from 'phaser';
+
+export function getPaths(): void {
   this.lines = this.map.findObject('Objects', obj => {
     if (obj.name === 'smallpath') {
       this.path = new Phaser.Curves.Path(
@@ -49,18 +51,20 @@ export function getPaths() {
   });
 }
 
-export function updateFollowers() {
+export function updateFollowers(): void {
   this.minions.forEach(follower => {
-    if (follower.angle === -180) {
-      follower.anims.play('left', true);
-    } else if (follower.angle === 90) {
-      follower.anims.play('front', true);
-    } else if (follower.angle === -90) {
-      follower.anims.play('back', true);
-    } else if (follower.angle === 0) {
-      follower.anims.play('right', true);
+    if (follower.anims) {
+      if (follower.angle === -180) {
+        follower.anims.play('left', true);
+      } else if (follower.angle === 90) {
+        follower.anims.play('front', true);
+      } else if (follower.angle === -90) {
+        follower.anims.play('back', true);
+      } else if (follower.angle === 0) {
+        follower.anims.play('right', true);
+      }
+      follower.angle = 0;
+      this.minionCoords.push(follower.pathVector);
     }
-    follower.angle = 0;
-    this.minionCoords.push(follower.pathVector);
   });
 }

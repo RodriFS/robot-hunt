@@ -3,7 +3,6 @@ export function preloader() {
   const progressBox = this.add.graphics();
 
   const width = this.cameras.main.width;
-  const height = this.cameras.main.height;
   const loadingText = this.make.text({
     x: width / 2,
     y: 180,

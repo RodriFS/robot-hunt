@@ -9,7 +9,7 @@ import { GameService } from '../game.service';
 export class DashboardComponent implements OnInit {
   playerList: string[] = [];
 
-  constructor(private gameSvc: GameService) {}
+  constructor(public gameSvc: GameService) {}
 
   ngOnInit() {}
 }

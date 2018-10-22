@@ -23,11 +23,6 @@ export function getAnims() {
     frameRate: 2,
     repeat: -1
   });
-  this.anims.create({
-    key: 'turn',
-    frames: [{ key: 'person', frame: 0 }, { key: 'person', frame: 18 }],
-    frameRate: 2
-  });
 
   if (this.playerName === 'player1') {
     this.anims.create({
