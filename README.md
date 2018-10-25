@@ -22,15 +22,14 @@ You'll need to have npm to install the dependencies. Follow the instructions sup
 ## Tech Stack
 
 **Front end**
-[Angular](https://angular.io/)
 
-[Phaser](https://phaser.io/)
+- [Angular](https://angular.io/)
+- [Phaser](https://phaser.io/)
 
 **Back end**
-[Express](https://expressjs.com/)
 
-[Socket.io](https://socket.io/)
-
+- [Express](https://expressjs.com/)
+- [Socket.io](https://socket.io/)
 
 ## Contributors
 
