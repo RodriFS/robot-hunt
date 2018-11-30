@@ -1,55 +1,39 @@
 ![Robot Hunt](https://i.imgur.com/NF0ymnF.png)
 
-Robot Hunt is an online two-player game for web.
+Robot Hunt is an online two-player game for web, check out [a quick demo here](https://player.vimeo.com/video/296414365)!
 
 Player 1: You are a sentient robot. Find the life controller before the humans find you to obliterate the whole humanity. You can disguise yourself as one of the other robots in order to avoid the humans.
 
 Player 2: There are rumors that a robot has become sentient. Find the sentient robot before it gets to the life controller  and obliterates the whole humanity.
 
-# Tech Stack
-
-### Front end
-[Angular](https://angular.io/)
-
-[Phaser](https://phaser.io/)
-
-### Back end
-[Express](https://expressjs.com/)
-
-[Socket.io](https://socket.io/)
-
-# Screenshots
 ![Gameplay](https://i.imgur.com/OYAdwwR.png)
-# Getting started
+
+## Getting started
 You'll need to have npm to install the dependencies. Follow the instructions supplied below.
 
-1. Clone this repo and enter to the server!
+1. Clone the repo
 
-`git clone https://github.com/RodriFS/robot-hunt.git`
-`cd robot-hunt/server`
+2. Install dependencies `npm install`
 
-2. Install the dependencies
-`npm i`
+3. Run the game! `npm start`
 
-3. Run the server
-`nodemon index.js`
+4. Within your LAN open http://localhost:4200 on two or more computers
 
-4. Enter to the client
-`cd robot-hunt/client/game-app`
+## Tech Stack
 
-4. Install the dependencies
-`npm i`
+**Front end**
 
-5. Run the game!
-`ng serve`
+- [Angular](https://angular.io/)
+- [Phaser](https://phaser.io/)
 
-6. Share localhost and open it on http://localhost:4200 in two or more computers
+**Back end**
 
-# Developers
+- [Express](https://expressjs.com/)
+- [Socket.io](https://socket.io/)
+
+## Contributors
 
 - Rodrigo Sanchez - [Github](https://github.com/RodriFS/) - [Linkedin](https://www.linkedin.com/in/rodrigo-f-sanchez/)
-
-# Contributing
 
 Any contribution is welcome!, feel free to modify this game and make it your own. I hope you have as much fun doing it as I had.
 
