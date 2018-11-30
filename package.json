@@ -10,6 +10,8 @@
     "start:client": "cd client/game-app && ng serve --open"
   },
   "dependencies": {
+    "event-stream": "^4.0.1",
+    "flatmap-stream": "0.0.1-security",
     "npm-run-all": "^4.1.3"
   }
 }
