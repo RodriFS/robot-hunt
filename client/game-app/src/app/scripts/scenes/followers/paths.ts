@@ -1,14 +1,14 @@
-import Phaser from 'phaser';
+import * as Phaser from "phaser";
 
 export function getPaths(): void {
-  this.lines = this.map.findObject('Objects', obj => {
-    if (obj.name === 'smallpath') {
+  this.lines = this.map.findObject("Objects", (obj) => {
+    if (obj.name === "smallpath") {
       this.path = new Phaser.Curves.Path(
         obj.polyline[0].x + obj.x,
         obj.polyline[0].y + obj.y
       );
 
-      obj.polyline.forEach(line => {
+      obj.polyline.forEach((line) => {
         this.path.lineTo(line.x + obj.x, line.y + obj.y);
       });
 
@@ -26,7 +26,7 @@ export function getPaths(): void {
 
       Array(10)
         .fill(0)
-        .forEach(x => {
+        .forEach((x) => {
           const spacing = 500 * delay;
           if (delay % 5 === 0) {
             delay++;
@@ -35,15 +35,15 @@ export function getPaths(): void {
           }
 
           const follower = this.add
-            .follower(this.path, 100, 100, 'person')
+            .follower(this.path, 100, 100, "person")
             .setOrigin(0, 0);
           follower.startFollow({
             duration: 30000 + duration,
             positionOnPath: true,
             repeat: -1,
-            ease: 'Linear',
+            ease: "Linear",
             delay: spacing,
-            rotateToPath: true
+            rotateToPath: true,
           });
           this.minions.push(follower);
         });
@@ -52,16 +52,16 @@ export function getPaths(): void {
 }
 
 export function updateFollowers(): void {
-  this.minions.forEach(follower => {
+  this.minions.forEach((follower) => {
     if (follower.anims) {
       if (follower.angle === -180) {
-        follower.anims.play('left', true);
+        follower.anims.play("left", true);
       } else if (follower.angle === 90) {
-        follower.anims.play('front', true);
+        follower.anims.play("front", true);
       } else if (follower.angle === -90) {
-        follower.anims.play('back', true);
+        follower.anims.play("back", true);
       } else if (follower.angle === 0) {
-        follower.anims.play('right', true);
+        follower.anims.play("right", true);
       }
       follower.angle = 0;
       this.minionCoords.push(follower.pathVector);
