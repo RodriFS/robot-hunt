@@ -1,11 +1,13 @@
-import * as io from 'socket.io-client';
+import * as io from "socket.io-client";
+import { environment } from "../../environments/environment";
 
-export class Socket {
-  public url = 'http://rodrifs.local:5000';
-  public socket = io.connect(
-    this.url,
-    { reconnection: true, reconnectionDelay: 1000, forceNew: true }
-  );
+export default class Socket {
+  public socket = io(environment.serverApi, {
+    reconnection: true,
+    reconnectionDelay: 1000,
+    forceNew: true,
+  });
+
   public static instance: Socket;
   player;
 

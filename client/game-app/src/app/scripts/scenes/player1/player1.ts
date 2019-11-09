@@ -1,17 +1,17 @@
-import Phaser from 'phaser';
+import * as Phaser from "phaser";
 
 export function getPlayer1() {
   this.spawnPoint = this.map.findObject(
-    'Objects',
-    obj => obj.name === 'Spawn Point'
+    "Objects",
+    (obj) => obj.name === "Spawn Point"
   );
   this.player = this.physics.add
-    .sprite(this.spawnPoint.x, this.spawnPoint.y, 'person')
+    .sprite(this.spawnPoint.x, this.spawnPoint.y, "person")
     .setOffset(0, 0);
   this.player.setCollideWorldBounds(true);
-  if (this.playerName === 'player1') {
+  if (this.playerName === "player1") {
     this.playerPos = this.physics.add
-      .sprite(this.spawnPoint.x, this.spawnPoint.y, 'playerPos')
+      .sprite(this.spawnPoint.x, this.spawnPoint.y, "playerPos")
       .setOffset(0, 0);
     this.playerPos.alpha = 0.3;
   }
@@ -24,7 +24,7 @@ export function updatePlayer1() {
 
   this.playerPos.x = this.player.x;
   this.playerPos.y = this.player.y;
-  this.playerPos.anims.play('playerPos', true);
+  this.playerPos.anims.play("playerPos", true);
   this.player.body.setVelocity(0);
 
   if (cursors.left.isDown) {
@@ -32,14 +32,14 @@ export function updatePlayer1() {
     this.coordinatesKeyboardEmit({
       x: this.player.x,
       y: this.player.y,
-      keyboard: 'left'
+      keyboard: "left",
     });
   } else if (cursors.right.isDown) {
     this.player.body.setVelocityX(80);
     this.coordinatesKeyboardEmit({
       x: this.player.x,
       y: this.player.y,
-      keyboard: 'right'
+      keyboard: "right",
     });
   } else {
     this.player.x = Phaser.Math.Snap.To(this.player.x, 8);
@@ -49,14 +49,14 @@ export function updatePlayer1() {
     this.coordinatesKeyboardEmit({
       x: this.player.x,
       y: this.player.y,
-      keyboard: 'up'
+      keyboard: "up",
     });
   } else if (cursors.down.isDown) {
     this.player.body.setVelocityY(80);
     this.coordinatesKeyboardEmit({
       x: this.player.x,
       y: this.player.y,
-      keyboard: 'down'
+      keyboard: "down",
     });
   } else {
     this.player.y = Phaser.Math.Snap.To(this.player.y, 8);
@@ -65,23 +65,23 @@ export function updatePlayer1() {
   this.player.body.velocity.normalize().scale(speed);
 
   if (cursors.left.isDown) {
-    this.player.anims.play('left', true);
+    this.player.anims.play("left", true);
   } else if (cursors.right.isDown) {
-    this.player.anims.play('right', true);
+    this.player.anims.play("right", true);
   } else if (cursors.up.isDown) {
-    this.player.anims.play('back', true);
+    this.player.anims.play("back", true);
   } else if (cursors.down.isDown) {
-    this.player.anims.play('front', true);
+    this.player.anims.play("front", true);
   } else {
     this.coordinatesKeyboardEmit({
       x: this.player.x,
       y: this.player.y,
-      keyboard: 'stop'
+      keyboard: "stop",
     });
-    this.player.anims.play('front', true);
+    this.player.anims.play("front", true);
   }
 
-  this.coordinatesMouseReceive().then(coordinates => {
+  this.coordinatesMouseReceive().then((coordinates) => {
     if (coordinates) {
       this.target.x = coordinates.x;
       this.target.y = coordinates.y;
