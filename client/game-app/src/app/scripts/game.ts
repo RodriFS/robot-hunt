@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 import GameScene from "./scenes/gameScene";
 import MenuScene from "./scenes/menuScene";
 
-const config: Phaser.GameConfig = {
+const config: Phaser.Types.Core.GameConfig = {
   version: "1.0",
   width: window.innerWidth,
   height: window.innerHeight,
@@ -23,8 +23,8 @@ const config: Phaser.GameConfig = {
     gamepad: false,
   },
   backgroundColor: "#000000",
-  pixelArt: true,
-  antialias: false,
+  // pixelArt: true,
+  // antialias: false,
 };
 
 export class Game extends Phaser.Game {

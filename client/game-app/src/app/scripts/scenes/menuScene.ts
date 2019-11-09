@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 import Socket from "../../lib/socket";
 
 export default class MenuScene extends Phaser.Scene {
@@ -13,10 +13,10 @@ export default class MenuScene extends Phaser.Scene {
   public music_loop;
   public scene;
   public input;
-  public load: Phaser.load;
+  public load;
   public playerName;
-  public add: Phaser.add;
-  public physics: Phaser.physics;
+  public add;
+  public physics;
   public scoreP1;
   public scoreP2;
 

@@ -1,6 +1,6 @@
 import Socket from "../../lib/socket";
 
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 import { assetsLoader } from "./loader/loader";
 import { getMaps } from "./map/map";
 import { getPlayer1, updatePlayer1 } from "./player1/player1";
@@ -21,25 +21,25 @@ export default class GameScene extends Phaser.Scene {
 
   public socket = Socket.getInstance();
 
-  public player: Phaser.physics;
+  public player;
   public playerName;
-  public orb: Phaser.physics;
-  public map: Phaser.map;
-  public lines: Phaser.lines;
+  public orb;
+  public map;
+  public lines;
   public protected = false;
-  public camera: Phaser.cameras;
-  public path: Phaser.path;
-  public spawnPoint: Phaser.spawnPoint;
-  public orbSpawnPoint: Phaser.spawnPoint;
+  public camera;
+  public path;
+  public spawnPoint;
+  public orbSpawnPoint;
   public minions = [];
   public minionCoords = [];
-  public belowLayer: Phaser.belowLayer;
-  public worldLayer: Phaser.worldLayer;
-  public aboveLayer: Phaser.aboveLayer;
-  public marker: Phaser.marker;
-  public music_loop: Phaser.music_loop;
-  public events: Phaser.events;
-  public time: Phaser.time;
+  public belowLayer;
+  public worldLayer;
+  public aboveLayer;
+  public marker;
+  public music_loop;
+  public events;
+  public time;
   public isDown: boolean;
 
   coordinatesKeyboardEmit(message) {

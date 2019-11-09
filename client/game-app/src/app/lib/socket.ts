@@ -1,8 +1,8 @@
 import * as io from "socket.io-client";
+import { environment } from "../../environments/environment";
 
 export default class Socket {
-  public url = "http://localhost:5000";
-  public socket = io.connect(this.url, {
+  public socket = io(environment.serverApi, {
     reconnection: true,
     reconnectionDelay: 1000,
     forceNew: true,
